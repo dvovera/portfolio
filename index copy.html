@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
+  <!-- Add these font imports -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500&family=Poppins:wght@200;300;400;500&family=Quicksand:wght@300;400;500&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.0/gsap.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', 'Montserrat', 'Quicksand', sans-serif;
+    }
+
+    :root {
+      --blue-lightest: #f2f2f2;
+      --blue-light: #e1e1e1;
+      --blue-medium: #99caff;
+      --blue-dark: #66a3ff;
+      --blue-text: #005ce6;
+      --text-dark: #2c3e50;
+      --text-light: #34495e;
+      --black: #000;
+      --light-black: #333;
+      --lighter-black: #666;
+    }
+
+    body {
+      overflow: hidden;
+      background-color: var(--blue-lightest);
+      color: var(--text-dark);
+    }
+
+    .container {
+      display: flex;
+      width: 300vw;
+      height: 100vh;
+      transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .section {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      padding-top: 2rem;
+      padding-bottom: 0;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .section.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .welcome {
+      background-color: var(--blue-lightest);
+    }
+
+    .about {
+      background-color: var(--blue-light);
+    }
+
+    .projects {
+      background-color: var(--blue-lightest);
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--black);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.6s ease 0.2s;
+      /* border: 2px solid var(--black); */
+      padding: 10px 30px 10px;
+      /* border-radius: 100px; */
+      backdrop-filter: blur(8px);
+    }
+
+    /* 
+    .welcome h1 {
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: none;
+    } */
+
+    p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      text-align: center;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      color: var(--black);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.6s ease 0.4s;
+    }
+
+    .section.active h1,
+    .section.active p {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .nav {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1rem;
+      z-index: 100;
+      padding: 0.5rem 1rem;
+      background-color: rgba(255, 255, 255, 0);
+      border-radius: 30px;
+
+      backdrop-filter: blur(8px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+      /* border: 1px solid var(--black); */
+    }
+
+    .nav-btn {
+      background-color: var(--lighter-black);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn:hover {
+      background-color: var(--light-black);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-btn.active {
+      background-color: var(--black);
+      transform: translateY(-2px);
+    }
+
+    .canvas-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      opacity: 0.8;
+    }
+
+    .project-card {
+      background-color: white;
+      border-radius: 15px;
+      padding: 1.3rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      /* Remove or modify this to let the card size to its content */
+      /* min-height: 200px; */
+      max-width: 400px;
+      /* transform: translateY(30px) scale(0.95); */
+      opacity: 0.9;
+      transition: all 0.5s ease;
+      border-left: 5px solid var(--black);
+      cursor: pointer;
+      position: relative;
+      /* Change overflow so extra content isn’t cut off */
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+
+    }
+
+
+    .section.active .project-card:hover {
+      /* transform: translateY(0) scale(1.02); */
+      opacity: 1;
+    }
+
+    /* .section.active .project-card:nth-child(3) {
+      transition-delay: 0.2s;
+    }
+
+    .section.active .project-card:nth-child(4) {
+      transition-delay: 0.4s;
+    } */
+
+    .project-card:hover {
+      transform: translateY(-10px) scale(1.00);
+      /* box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12); */
+    }
+
+    .project-card h3 {
+      margin-bottom: 0.8rem;
+      color: var(--black);
+      font-size: 1.5rem;
+    }
+
+    .project-card p {
+      margin-bottom: 0.8rem;
+      text-align: left;
+      font-size: 1.1rem;
+      transition: none;
+      transform: none;
+      opacity: 1;
+    }
+
+    .skill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.8rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease 0.6s;
+
+    }
+
+    .section.active .skill-list {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .skill {
+      background-color: var(--blue-lightest);
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+
+    .skill:hover {
+      background-color: var(--blue-medium);
+      transform: translateY(-3px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1.2rem;
+      margin-top: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease 0.8s;
+    }
+
+    .section.active .social-links {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .social-link {
+      color: var(--blue-text);
+      text-decoration: none;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      background-color: white;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .social-link:hover {
+      background-color: var(--blue-text);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 5px;
+      background-color: var(--black);
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.3s ease;
+    }
+
+    .scroll-indicator {
+      position: fixed;
+      right: 3rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 100;
+    }
+
+    .scroll-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid var(--blue-medium);
+    }
+
+    .scroll-dot.active {
+      background-color: var(--blue-dark);
+      transform: scale(1.3);
+    }
+
+    /* Cursor effects */
+    .cursor {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--blue-dark);
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, border-color 0.3s;
+      /* mix-blend-mode: difference; */
+      display: none;
+    }
+
+    /* 
+    .cursor-dot {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background-color: var(--blue-text);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      display: none;
+    } */
+
+    @media (hover: hover) {
+
+      .cursor,
+      .cursor-dot {
+        display: block;
+      }
+    }
+
+    /* Add these style fixes to your CSS to eliminate any bottom margin */
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      position: relative;
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+
+    .container {
+      display: flex;
+      width: 300vw;
+      height: 100vh;
+      transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+      margin: 0;
+      padding: 0;
+    }
+
+    /* .section {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      margin: 0;
+    } */
+
+    .canvas-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      opacity: 0.8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .canvas-container canvas {
+      display: block;
+      /* Removes inline element gaps */
+    }
+
+    /* Add these styles to your CSS section */
+
+    /* Add these updated styles to your CSS section */
+
+    #welcome h1 {
+      text-align: center;
+      line-height: 1.3;
+      color: black;
+      /* text-decoration: overline; */
+      border-top: 8px solid black;
+
+      padding: 5px;
+    }
+
+    #typing-text {
+      position: relative;
+      font-weight: 300;
+      color: var(--blue-text);
+      display: inline-block;
+      min-height: 1.5em;
+      min-width: 5px;
+      /* Ensures there's always some width */
+      vertical-align: bottom;
+      /* Keeps alignment consistent */
+    }
+
+    #typing-text::after {
+      content: '|';
+      position: absolute;
+      right: -8px;
+      opacity: 1;
+      animation: cursor-blink 1s infinite;
+    }
+
+    @keyframes cursor-blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* Add this to your existing CSS */
+    .projects-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      /* Creates a flexible grid */
+      gap: 1.5rem;
+      /* Adds spacing between grid items */
+      width: 100%;
+      max-width: 1200px;
+      height: auto;
+      overflow-y: auto;
+      padding: 1rem;
+      margin: auto;
+      justify-content: center;
+    }
+
+
+    /* Add custom scrollbar styling */
+    .projects-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .projects-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+    }
+
+    .projects-container::-webkit-scrollbar-thumb {
+      background: var(--light-black);
+      border-radius: 10px;
+    }
+
+    .projects-container::-webkit-scrollbar-thumb:hover {
+      background: var(--black);
+    }
+
+    /* Make sure the projects section maintains its layout */
+    .section.projects {
+      overflow: hidden;
+    }
+
+    /* Ensure project cards take appropriate width */
+    .project-card {
+      width: 100%;
+    }
+
+    /* Project sidebar styles */
+    .project-sidebar {
+      position: fixed;
+      top: 0;
+      right: -500px;
+      width: 500px;
+      height: 100vh;
+      background-color: white;
+      box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+      z-index: 200;
+      padding: 2rem;
+      overflow-y: auto;
+      transition: right 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+      border: 0px;
+    }
+
+    .project-sidebar.open {
+      right: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--blue-light);
+    }
+
+    .close-sidebar {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-dark);
+      transition: transform 0.3s ease;
+    }
+
+    .close-sidebar:hover {
+      transform: scale(1.2);
+    }
+
+    .project-sidebar h2 {
+      font-size: 2rem;
+      color: var(--text-dark);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-content {
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-content p {
+      text-align: left;
+      margin-bottom: 1.5rem;
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .sidebar-section {
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-section h3 {
+      font-size: 1.3rem;
+      color: var(--text-dark);
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--blue-light);
+    }
+
+    .tech-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tech-tag {
+      background-color: var(--blue-lightest);
+      color: var(--black);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      margin: 0.3rem;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .tech-tag:hover {
+      background-color: var(--blue-light);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+
+    .project-image {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .project-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .project-link {
+      background-color: var(--blue-medium);
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .project-link:hover {
+      background-color: var(--blue-text);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 150;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      /* Add visibility to transition */
+    }
+
+    .overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Responsive styles for sidebar */
+    @media (max-width: 768px) {
+      .project-sidebar {
+        width: 100%;
+        right: -100%;
+      }
+    }
+
+    .section.about .scroll-container {
+      max-width: 800px;
+      /* Set a maximum width for the content area */
+      /* width: 100%; */
+      margin: 0 auto;
+      /* Center the container */
+      padding-right: 10px;
+      /* Optional: adjust padding for scrollbar space */
+      height: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      overflow-x: hidden;
+    }
+
+
+    .scrolling-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding-right: 10px;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .scrolling-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .scrolling-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+    }
+
+    .scrolling-container::-webkit-scrollbar-thumb {
+      background: var(--light-black);
+      border-radius: 10px;
+    }
+
+    .scrolling-container::-webkit-scrollbar-thumb:hover {
+      background: var(--black);
+    }
+
+
+
+    /* Remove the fixed height on tab-content so it grows naturally */
+    .section.about .tab-content {
+      height: auto;
+    }
+
+    .scrolling-container {
+      width: 800px;
+      max-width: 800px;
+      margin: 0 auto;
+      height: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      /* Add padding around the content */
+      box-sizing: border-box;
+      /* Include padding in height calculation */
+    }
+
+    /* Custom scrollbar styling */
+    .scrolling-container::-webkit-scrollbar {
+      width: 12px;
+      /* Slightly wider scrollbar */
+    }
+
+    .scrolling-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      margin: 20px 0;
+      /* Add vertical padding to the scrollbar track */
+    }
+
+    .scrolling-container::-webkit-scrollbar-thumb {
+      background: var(--light-black);
+      border-radius: 10px;
+      border: 3px solid transparent;
+      /* Creates padding effect */
+      background-clip: content-box;
+      /* Ensures background doesn't extend under the border */
+    }
+
+    .scrolling-container::-webkit-scrollbar-thumb:hover {
+      background: var(--black);
+    }
+
+    .projects-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+      height: auto;
+      overflow-y: auto;
+      padding: 20px;
+      /* Add padding around content */
+      box-sizing: border-box;
+      /* Include padding in height calculation */
+      margin: auto;
+      justify-content: center;
+    }
+
+    /* Custom scrollbar styling for projects */
+    .projects-container::-webkit-scrollbar {
+      width: 12px;
+      /* Slightly wider scrollbar */
+    }
+
+    .projects-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      margin: 20px 0;
+      /* Add vertical padding to track */
+    }
+
+    .projects-container::-webkit-scrollbar-thumb {
+      background: var(--light-black);
+      border-radius: 10px;
+      border: 3px solid transparent;
+      /* Creates padding effect */
+      background-clip: content-box;
+      /* Ensures background doesn't extend under border */
+    }
+
+    .projects-container::-webkit-scrollbar-thumb:hover {
+      background: var(--black);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress-bar"></div>
+  <!-- <div class="cursor"></div>
+  <div class="cursor-dot"></div> -->
+  <div class="overlay"></div>
+
+  <div class="container">
+    <section class="section welcome active" id="welcome">
+      <div class="canvas-container" id="welcome-canvas"></div>
+      <h1>daniel tran</h1>
+      <!-- <p>Hello! I'm a developer passionate about creating beautiful and functional web experiences.</p> -->
+      <!-- <div class="social-links">
+        <a href="#" class="social-link" data-hover="true">GitHub</a>
+        <a href="#" class="social-link" data-hover="true">LinkedIn</a>
+        <a href="#" class="social-link" data-hover="true">Twitter</a>
+      </div> -->
+    </section>
+    <!-- Modified About Section -->
+    <section class="section about" id="about">
+      <h1>about me</h1>
+      <p>I want to make cool things or silly things or meaningful things.</p>
+      <div class="scroll-container">
+        <div class="scrolling-container">
+          <div class="canvas-container" id="about-canvas"></div>
+
+          <div class="about-tabs">
+            <button class="tab-btn active" data-tab="education-experience">Education & Experience</button>
+            <button class="tab-btn" data-tab="skills-awards">Skills & Awards</button>
+          </div>
+
+          <div class="tab-content">
+            <!-- Skills & Awards Tab -->
+            <div class="tab-pane" id="skills-awards-tab">
+              <div class="scrollable-content">
+                <h2 class="section-subtitle">Skills</h2>
+                <div class="skill-list">
+                  <span class="skill" data-hover="true">HTML5</span>
+                  <span class="skill" data-hover="true">CSS3</span>
+                  <span class="skill" data-hover="true">JavaScript</span>
+                  <span class="skill" data-hover="true">Python</span>
+                  <span class="skill" data-hover="true">Three.js</span>
+                  <span class="skill" data-hover="true">React.js</span>
+                  <span class="skill" data-hover="true">React Native</span>
+
+                </div>
+
+                <h2 class="section-subtitle">Awards</h2>
+                <div class="awards-grid">
+                  <div class="award-card">
+                    <!-- <div class="award-icon">🏆</div> -->
+                    <h3>
+                      FTC Robotics Provincial Connect Award</h3>
+                    <p>FTC British Columbia 2024</p>
+                    <p></p>
+                  </div>
+                  <div class="award-card">
+                    <div class="award-icon">🎨</div>
+                    <h3>Creative Excellence</h3>
+                    <p>Digital Design Summit 2022</p>
+                    <p>For innovative UI/UX approach in 3D web interfaces</p>
+                  </div>
+                  <div class="award-card">
+                    <div class="award-icon">⭐</div>
+                    <h3>Rising Talent</h3>
+                    <p>Frontend Masters Showcase 2021</p>
+                    <p>Recognition for outstanding contribution to web development community</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Education & Experience Tab -->
+            <div class="tab-pane active" id="education-experience-tab">
+              <div class="scrollable-content">
+                <div class="timeline">
+
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content education">
+                      <h3>Bachelor's of Engineering</h3>
+                      <h4>University of Alberta | Edmonton, Alberta</h4>
+                      <p class="timeline-date">2024-2028</p>
+                      <p>Specialized in Computer Graphics and Interactive Media. Thesis on "Optimizing WebGL Performance
+                        for
+                        Interactive 3D Visualizations."</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <h3>Programming Instructor</h3>
+                      <h4>CodeNinjas Tamarack | Edmonton, Alberta</h4>
+                      <p class="timeline-date">2024-present</p>
+                      <p>Developed interactive data visualization dashboards. Optimized rendering performance for large
+                        datasets.</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <h3>Chapter Manager</h3>
+                      <h4>iTutorAcademy South | Edmonton, Alberta</h4>
+                      <p class="timeline-date">2024-present</p>
+                      <p>Managed the end-to-end hiring process, including recruitment, interviews, onboarding, and
+                        training for new tutors</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content education">
+                      <h3>International Baccalaureate Diploma</h3>
+                      <h4>Pearson UWC International School | Victoia, British Columbia</h4>
+                      <p class="timeline-date">2022-2024</p>
+                      <p>Specialized in Computer Graphics and Interactive Media. Thesis on "Optimizing WebGL Performance
+                        for
+                        Interactive 3D Visualizations."</p>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <style>
+      /* About Tabs Styling */
+      .about-tabs {
+        display: flex;
+        justify-content: center;
+        margin: 2rem 0 1.5rem;
+        gap: 0.8rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease 0.5s;
+      }
+
+      .section.active .about-tabs {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .tab-btn {
+        background-color: var(--blue-lightest);
+        color: var(--black);
+        border: none;
+        padding: 0.5rem 1.2rem;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        font-weight: 500;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .tab-btn:hover {
+        background-color: var(--blue-light);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .tab-btn.active {
+        background-color: var(--black);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .tab-content {
+        width: 100%;
+        /* width: 800px; */
+        max-width: 800px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease 0.7s;
+        height: 450px;
+        /* Fixed height for scrollable area */
+      }
+
+      .section.active .tab-content {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .tab-pane {
+        width: 100%;
+        display: none;
+        opacity: 0;
+        /* transform: translateY(10px); */
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        /* height: 100%; */
+      }
+
+      .tab-pane.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Scrollable Content */
+      .scrollable-content {
+        height: 100%;
+        overflow-y: auto;
+        padding-right: 15px;
+        /* Space for scrollbar */
+        scrollbar-width: thin;
+        scrollbar-color: var(--blue-medium) var(--blue-lightest);
+      }
+
+      /* Custom scrollbar styling for WebKit browsers */
+      .scrollable-content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .scrollable-content::-webkit-scrollbar-track {
+        background: var(--blue-lightest);
+        border-radius: 10px;
+      }
+
+      .scrollable-content::-webkit-scrollbar-thumb {
+        background-color: var(--blue-medium);
+        border-radius: 10px;
+        border: 2px solid var(--blue-lightest);
+      }
+
+      .scrollable-content::-webkit-scrollbar-thumb:hover {
+        background-color: var(--blue-dark);
+      }
+
+      /* Section Subtitle */
+      .section-subtitle {
+        font-size: 1.4rem;
+        margin: 1.8rem 0 1rem;
+        color: var(--black);
+        position: relative;
+        padding-bottom: 0.6rem;
+      }
+
+      .section-subtitle:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 60px;
+        height: 2px;
+        background-color: var(--light-black);
+      }
+
+      .section-subtitle:first-child {
+        margin-top: 0;
+      }
+
+      /* Skills Styling */
+      .skill-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin: 1rem 0 2rem;
+      }
+
+      .skill {
+        background-color: var(--blue-lightest);
+        color: var(--black);
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .skill:hover {
+        background-color: var(--blue-light);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Timeline Styling */
+      .timeline {
+        position: relative;
+        padding: 0 0 0 0;
+        max-width: 700px;
+        margin: 0 auto;
+        margin-left: 1rem;
+      }
+
+      .timeline:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 2px;
+        height: 100%;
+        background-color: var(--black);
+      }
+
+      .timeline-item {
+        position: relative;
+        padding-left: 3rem;
+        margin-bottom: 2rem;
+        overflow: visible;
+      }
+
+      .timeline-item:last-child {
+        margin-bottom: 1rem;
+        /* Add some spacing at the bottom of the timeline */
+      }
+
+      .timeline-dot {
+        position: absolute;
+        left: -0.5rem;
+        top: 0;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background-color: var(--light-black);
+        border: 3px solid var(--blue-lightest);
+        /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); */
+        overflow: visible;
+      }
+
+      .timeline-content {
+        background-color: white;
+        padding: 1.2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid var(--black);
+      }
+
+      .timeline-content.education {
+        border-left: 4px solid var(--blue-dark);
+      }
+
+      .timeline-content.education h3 {
+        font-size: 1.3rem;
+        margin: 0 0 0.3rem;
+        color: var(--black);
+      }
+
+      .timeline-content h3 {
+        font-size: 1.3rem;
+        margin: 0 0 0.3rem;
+        color: var(--black);
+      }
+
+      .timeline-content h4 {
+        font-size: 1.1rem;
+        margin: 0 0 0.3rem;
+        color: var(--light-black);
+        font-weight: 400;
+      }
+
+      .timeline-date {
+        font-size: 0.9rem;
+        color: var(--lighter-black);
+        margin-bottom: 0.8rem;
+        font-weight: 500;
+      }
+
+      .timeline-content p {
+        margin: 0;
+        text-align: left;
+        font-size: 1rem;
+        line-height: 1.6;
+        transition: none;
+        opacity: 1;
+        transform: none;
+      }
+
+      /* Awards Styling */
+      .awards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        width: 100%;
+        max-width: 800px;
+        margin-bottom: 1.5rem;
+        /* Bottom spacing for scrollable area */
+      }
+
+      .award-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+        border-top: 4px solid var(--black);
+      }
+
+      .award-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      }
+
+      .award-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .award-card h3 {
+        font-size: 1.2rem;
+        margin: 0 0 0.5rem;
+        color: var(--black);
+      }
+
+      .award-card p {
+        margin: 0.2rem 0;
+        font-size: 0.95rem;
+        color: var(--text-light);
+        text-align: center;
+        transition: none;
+        opacity: 1;
+        transform: none;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .about-tabs {
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .tab-btn {
+          font-size: 0.9rem;
+          padding: 0.4rem 1rem;
+        }
+
+        .tab-content {
+          height: 400px;
+          /* Slightly smaller height on mobile */
+        }
+
+        .timeline:before {
+          left: 18px;
+        }
+
+        .timeline-item {
+          padding-left: 3rem;
+        }
+
+        .timeline-dot {
+          left: 10px;
+        }
+
+        .awards-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-subtitle {
+          font-size: 1.3rem;
+          margin: 1.5rem 0 0.8rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .tab-content {
+          height: 350px;
+          /* Even smaller height on very small screens */
+        }
+      }
+
+      .scrolling-container {
+        /* width: 100%; */
+        width: 800px;
+        max-width: 800px;
+        margin: 0 auto;
+        padding-right: 10px;
+        height: 100%;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    </style>
+
+    <script>
+
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // Tab functionality for About section
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        function activateTab(tabName) {
+          // Hide all tab panes
+          tabPanes.forEach(pane => {
+            pane.classList.remove('active');
+          });
+
+          // Deactivate all tab buttons
+          tabButtons.forEach(btn => {
+            btn.classList.remove('active');
+          });
+
+          // Activate the selected tab and its content
+          document.querySelector(`#${tabName}-tab`).classList.add('active');
+          document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        }
+
+        // Add click event to tab buttons
+        tabButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const tabName = button.getAttribute('data-tab');
+            activateTab(tabName);
+          });
+        });
+
+        // Add these tab buttons to hover elements for cursor effect
+        tabButtons.forEach(btn => {
+          btn.setAttribute('data-hover', 'true');
+        });
+      });
+    </script>
+    <section class="section projects" id="projects">
+      <div class="canvas-container" id="projects-canvas"></div>
+      <h1>projects</h1>
+      <div class="projects-container">
+        <div class="project-card" data-hover="true" data-project="the-orable">
+          <h3>The Orable</h3>
+          <p>An online oracle that will draw Tarot cards and read your future.</p>
+          <p>
+
+            <span class="tech-tag">HTML</span>
+            <span class="tech-tag">CSS</span>
+            <span class="tech-tag">JS</span>
+          </p>
+
+        </div>
+        <div class="project-card" data-hover="true" data-project="product-visualizer">
+          <h3>3D Product Visualizer</h3>
+          <p>An interactiv
+            and Reilt with Three.js and Reilt with Three.js and React.</p>
+          <p>Tech: Three.js, React, WebGL</p>
+        </div>
+        <div class="project-card" data-hover="true" data-project="data-dashboard">
+          <h3>Data Visualization Dashboard</h3>
+          <p>A responsive dashboard for visualizing complex datasets with interactive elements.</p>
+          <p>Tech: D3.js, JavaScript, CSS Grid</p>
+        </div>
+        <div class="project-card" data-hover="true" data-project="portfolio-site">
+          <h3>Interactive Portfolio Site</h3>
+          <p>A creative portfolio website with 3D animations and interactive elements.</p>
+          <p>Tech: Three.js, GSAP, HTML/CSS</p>
+        </div>
+        <div class="project-card" data-hover="true" data-project="portfolio-site">
+          <h3>Interactive Portfolio Site</h3>
+          <p>A creative portfolio website with 3D animations and interactive elements.</p>
+          <p>Tech: Three.js, GSAP, HTML/CSS</p>
+        </div>
+        <div class="project-card" data-hover="true" data-project="portfolio-site">
+          <h3>Interactive Portfolio Site</h3>
+          <p>A creative portfolio website with 3D animations and interactive elements.</p>
+          <p>Tech: Three.js, GSAP, HTML/CSS</p>
+        </div>
+        <div class="project-card" data-hover="true" data-project="portfolio-site">
+          <h3>Interactive Portfolio Site</h3>
+          <p>A creative portfolio website with 3D animations and interactive elements.</p>
+          <p>Tech: Three.js, GSAP, HTML/CSS</p>
+        </div>
+        <div class="project-card" data-hover="true" data-project="portfolio-site">
+          <h3>Interactive Portfolio Site</h3>
+          <p>A creative portfolio website with 3D animations and interactive elements.</p>
+          <p>Tech: Three.js, GSAP, HTML/CSS</p>
+        </div>
+        <!-- Add more project cards as needed -->
+      </div>
+    </section>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" data-section="welcome" data-hover="true">Home</button>
+    <button class="nav-btn" data-section="about" data-hover="true">About</button>
+    <button class="nav-btn" data-section="projects" data-hover="true">Projects</button>
+  </div>
+  <!-- 
+  <div class="scroll-indicator">
+    <span class="scroll-dot active" data-section="welcome"></span>
+    <span class="scroll-dot" data-section="about"></span>
+    <span class="scroll-dot" data-section="projects"></span>
+  </div> -->
+
+  <!-- Project Sidebar -->
+  <div class="project-sidebar">
+    <div class="sidebar-header">
+      <h2>Project Details</h2>
+      <button class="close-sidebar" data-hover="true">×</button>
+    </div>
+    <div class="sidebar-content">
+      <!-- Content will be dynamically loaded here -->
+    </div>
+  </div>
+
+  <script>
+    // Project data
+    const projectsData = {
+      "the-orable": {
+        title: "The Orable",
+        description: "An interactive 3D product configurator that allows users to customize and view products in real-time. Built with Three.js and React, this application offers a seamless experience for users to interact with virtual products before making a purchase decision.",
+        longDescription: "This project was designed to solve the common e-commerce problem of customers wanting to see products from all angles before purchasing. The visualizer allows users to rotate, zoom, and customize various product features including colors, materials, and add-ons, all in a real-time 3D environment.<br><br>The application features realistic lighting, textures, and physics-based rendering to provide an accurate representation of the products. Performance optimization was a key challenge, requiring techniques like level-of-detail rendering and texture compression.",
+        technologies: ["Three.js", "React", "WebGL", "JavaScript", "GLSL Shaders", "React Three Fiber"],
+        features: [
+          "Real-time 3D rendering",
+          "Interactive color and material selection",
+          "Product configuration saving and sharing",
+          "Mobile-responsive design",
+          "High-performance rendering optimizations"
+        ],
+        image: "/api/placeholder/400/250", // Using placeholder as per instructions
+        demoLink: "#",
+        codeLink: "#"
+      },
+      "product-visualizer": {
+        title: "3D Product Visualizer",
+        description: "An interactive 3D product configurator that allows users to customize and view products in real-time. Built with Three.js and React, this application offers a seamless experience for users to interact with virtual products before making a purchase decision.",
+        longDescription: "This project was designed to solve the common e-commerce problem of customers wanting to see products from all angles before purchasing. The visualizer allows users to rotate, zoom, and customize various product features including colors, materials, and add-ons, all in a real-time 3D environment.<br><br>The application features realistic lighting, textures, and physics-based rendering to provide an accurate representation of the products. Performance optimization was a key challenge, requiring techniques like level-of-detail rendering and texture compression.",
+        technologies: ["Three.js", "React", "WebGL", "JavaScript", "GLSL Shaders", "React Three Fiber"],
+        features: [
+          "Real-time 3D rendering",
+          "Interactive color and material selection",
+          "Product configuration saving and sharing",
+          "Mobile-responsive design",
+          "High-performance rendering optimizations"
+        ],
+        image: "/api/placeholder/400/250", // Using placeholder as per instructions
+        demoLink: "#",
+        codeLink: "#"
+      },
+      "data-dashboard": {
+        title: "Data Visualization Dashboard",
+        description: "A responsive dashboard for visualizing complex datasets with interactive elements. Uses D3.js for powerful data visualization capabilities.",
+        longDescription: "This dashboard was created for a financial technology company to help their clients visualize and analyze market trends and portfolio performance. The dashboard combines multiple visualization types including line charts, bar graphs, heat maps, and interactive tables to provide a comprehensive view of complex financial data.<br><br>One of the key challenges was optimizing performance when rendering large datasets. This was achieved through data aggregation techniques, lazy loading, and efficient DOM manipulation.",
+        technologies: ["D3.js", "JavaScript", "CSS Grid", "SVG", "REST API", "Chart.js"],
+        features: [
+          "Real-time data updates",
+          "Interactive filtering and sorting",
+          "Customizable dashboard layouts",
+          "Export capabilities (PDF, CSV)",
+          "Cross-browser compatibility"
+        ],
+        image: "/api/placeholder/400/250", // Using placeholder as per instructions
+        demoLink: "#",
+        codeLink: "#"
+      },
+      "portfolio-site": {
+        title: "Interactive Portfolio Site",
+        description: "A creative portfolio website featuring 3D animations and interactive elements to showcase my work and skills.",
+        longDescription: "This portfolio site was designed to demonstrate my capabilities in creating immersive web experiences. It features custom 3D backgrounds on each section, smooth transitions between pages, and interactive elements that respond to user input.<br><br>The site is built with performance in mind, ensuring that the 3D elements and animations don't compromise load times or responsiveness across devices. The Three.js elements are optimized through techniques like object pooling and scene management.",
+        technologies: ["Three.js", "GSAP", "HTML/CSS", "JavaScript", "Responsive Design", "WebGL"],
+        features: [
+          "Custom 3D animated backgrounds",
+          "Smooth page transitions",
+          "Interactive project showcases",
+          "Responsive design for all devices",
+          "Performance-optimized animations"
+        ],
+        image: "/api/placeholder/400/250", // Using placeholder as per instructions
+        demoLink: "#",
+        codeLink: "#"
+      }
+    };
+
+    // Cursor effects
+    // document.addEventListener('DOMContentLoaded', () => {
+    //   const cursor = document.querySelector('.cursor');
+    //   const cursorDot = document.querySelector('.cursor-dot');
+    //   const hoverElements = document.querySelectorAll('[data-hover="true"]');
+
+    //   document.addEventListener('mousemove', (e) => {
+    //     gsap.to(cursor, {
+    //       x: e.clientX,
+    //       y: e.clientY,
+    //       duration: 0.15
+    //     });
+    //     gsap.to(cursorDot, {
+    //       x: e.clientX,
+    //       y: e.clientY,
+    //       duration: 0.03
+    //     });
+    //   });
+
+    //   hoverElements.forEach(element => {
+    //     element.addEventListener('mouseenter', () => {
+    //       gsap.to(cursor, {
+    //         width: 60,
+    //         height: 60,
+    //         borderColor: 'var(--blue-dark)',
+    //         duration: 0.3
+    //       });
+    //     });
+
+    //     element.addEventListener('mouseleave', () => {
+    //       gsap.to(cursor, {
+    //         width: 40,
+    //         height: 40,
+    //         borderColor: 'var(--blue-dark)',
+    //         duration: 0.3
+    //       });
+    //     });
+    //   });
+    // });
+
+    // Add these mouse tracking variables at the beginning of your script section
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+
+    // Track mouse position
+    document.addEventListener('mousemove', (event) => {
+      // Normalize mouse coordinates between -1 and 1
+      targetMouseX = (event.clientX / window.innerWidth) * 2 - 1;
+      targetMouseY = -((event.clientY / window.innerHeight) * 2 - 1);
+    });
+
+
+    // Section navigation and animations
+    let currentSection = 0;
+    const sections = ['welcome', 'about', 'projects'];
+    const container = document.querySelector('.container');
+    const progressBar = document.querySelector('.progress-bar');
+
+    function updateProgressBar() {
+      const progress = ((currentSection) / (sections.length - 1)) * 100;
+      progressBar.style.width = `${progress}%`;
+    }
+
+    function scrollToSection(index) {
+      // Prevent scrolling beyond bounds
+      if (index < 0 || index >= sections.length) return;
+
+      currentSection = index;
+
+      // Update container position
+      container.style.transform = `translateX(-${currentSection * 100}vw)`;
+
+      // Update active class on sections
+      document.querySelectorAll('.section').forEach((section, i) => {
+        if (i === currentSection) {
+          section.classList.add('active');
+        } else {
+          section.classList.remove('active');
+        }
+      });
+
+      // Update active buttons
+      document.querySelectorAll('.nav-btn').forEach((btn, i) => {
+        if (i === currentSection) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // Update scroll dots
+      document.querySelectorAll('.scroll-dot').forEach((dot, i) => {
+        if (i === currentSection) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+
+      updateProgressBar();
+    }
+
+    // Event listeners for navigation
+    document.querySelectorAll('.nav-btn').forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        scrollToSection(index);
+      });
+    });
+
+    document.querySelectorAll('.scroll-dot').forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        scrollToSection(index);
+      });
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        scrollToSection(currentSection + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        scrollToSection(currentSection - 1);
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const projectCards = document.querySelectorAll('.project-card');
+      const sidebar = document.querySelector('.project-sidebar');
+      const sidebarContent = document.querySelector('.sidebar-content');
+      const closeSidebarButton = document.querySelector('.close-sidebar');
+      const overlay = document.querySelector('.overlay');
+
+      projectCards.forEach(card => {
+        card.addEventListener('click', () => {
+          const projectId = card.getAttribute('data-project');
+          const projectData = projectsData[projectId];
+
+          if (projectData) {
+            sidebarContent.innerHTML = `
+            <h2>${projectData.title}</h2>
+            <img src="${projectData.image}" alt="${projectData.title}" class="project-image">
+            <p>${projectData.longDescription}</p>
+            <div class="sidebar-section">
+              <h3>Technologies Used</h3>
+              <div class="tech-list">
+                ${projectData.technologies.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+              </div>
+            </div>
+            <div class="sidebar-section">
+              <h3>Features</h3>
+              <ul>
+                ${projectData.features.map(feature => `<li>${feature}</li>`).join('')}
+              </ul>
+            </div>
+            <div class="project-links">
+              <a href="${projectData.demoLink}" target="_blank" class="project-link">Live Demo</a>
+              <a href="${projectData.codeLink}" target="_blank" class="project-link">View Code</a>
+            </div>
+          `;
+
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+          }
+        });
+      });
+
+      closeSidebarButton.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      });
+
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      });
+    });
+
+
+    // Wheel navigation
+    let wheelTimeout;
+    // Replace your existing wheel event listener with this improved version
+    // Replace your existing wheel event listener with this improved version
+    document.addEventListener('wheel', (e) => {
+      const sidebar = document.querySelector('.project-sidebar');
+      if (sidebar && sidebar.classList.contains('open')) {
+        return; // Don't allow section scrolling when sidebar is open
+      }
+
+      const activeSection = document.querySelector('.section.active');
+      const scrollable = activeSection.querySelector('.scrolling-container, .projects-container');
+
+      // Only check scrollable content if it exists and mouse is over it
+      if (scrollable) {
+        const rect = scrollable.getBoundingClientRect();
+        const isMouseOverScrollable =
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom;
+
+        if (isMouseOverScrollable) {
+          const { scrollTop, scrollHeight, clientHeight } = scrollable;
+          const atBottom = scrollTop >= scrollHeight - clientHeight - 1;
+          const atTop = scrollTop <= 0;
+
+          // If we're at the bottom and scrolling down, go to next section
+          if (isMouseOverScrollable && e.deltaY > 0 && atBottom) {
+            scrollToSection(currentSection + 1);
+            return;
+          }
+
+          // If we're at the top and scrolling up, go to previous section
+          if (isMouseOverScrollable && e.deltaY < 0 && atTop) {
+            scrollToSection(currentSection - 1);
+            return;
+          }
+
+          // If we're not at boundaries, let the container scroll normally
+          if (isMouseOverScrollable && !atBottom && !atTop) {
+            return;
+          }
+        }
+      }
+
+      // If we're not over scrollable content or at boundaries, handle section navigation
+      if (e.deltaY > 0) {
+        scrollToSection(currentSection + 1);
+      } else if (e.deltaY < 0) {
+        scrollToSection(currentSection - 1);
+      }
+    });
+
+
+    // *** OPTIMIZED 3D BACKGROUND EFFECTS ***
+
+
+
+    // Update the welcome canvas function to be mouse interactive
+    function createWelcomeCanvas() {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.getElementById("welcome-canvas").appendChild(renderer.domElement);
+
+      let modelPivot;
+
+      // Load your 3D model
+      const loader = new THREE.GLTFLoader();
+      loader.load("Triceratops.glb", function (gltf) {
+        let model = gltf.scene;
+        model.traverse(function (child) {
+          if (child.isMesh) {
+            child.material.flatShading = true;
+            child.material.needsUpdate = true;
+            child.material.color.set("white");
+          }
+        });
+        model.scale.set(0.5, 0.5, 0.5);
+
+        // Compute the bounding box of the model and get its center
+        const box = new THREE.Box3().setFromObject(model);
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+
+        // Shift the model so that its center of mass is at the origin
+        model.position.sub(center);
+
+        // Create a pivot group at the origin and add the model
+        modelPivot = new THREE.Group();
+        modelPivot.add(model);
+        scene.add(modelPivot);
+      });
+
+
+
+      // Add lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(5, 5, 5);
+      scene.add(directionalLight);
+
+      // Create floating particles (same as before)
+      const particleCount = 300;
+      const particleGeometry = new THREE.BufferGeometry();
+      const particlePositions = new Float32Array(particleCount * 3);
+      const particleSizes = new Float32Array(particleCount);
+      const particleColors = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount; i++) {
+        const radius = 8 + Math.random() * 5;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI;
+        particlePositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+        particlePositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        particlePositions[i * 3 + 2] = radius * Math.cos(phi);
+        particleSizes[i] = 0.1 + Math.random() * 0.2;
+        const colorIntensity = 0.5 + Math.random() * 0.5;
+        particleColors[i * 3] = 0.4 * colorIntensity;
+        particleColors[i * 3 + 1] = 0.6 * colorIntensity;
+        particleColors[i * 3 + 2] = 1.0 * colorIntensity;
+      }
+      particleGeometry.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
+      particleGeometry.setAttribute("size", new THREE.BufferAttribute(particleSizes, 1));
+      particleGeometry.setAttribute("color", new THREE.BufferAttribute(particleColors, 3));
+      const particleMaterial = new THREE.PointsMaterial({
+        size: 0.15,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending,
+      });
+      const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
+      scene.add(particleSystem);
+
+      camera.position.z = 15;
+
+      // Auto rotation speeds
+      const autoRotateSpeedY = 0.01;
+      const autoRotateSpeedX = 0.005;
+      // Influence factor for mouse movement
+      const mouseInfluenceY = -0.02;
+      const mouseInfluenceX = 0.02;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const time = Date.now() * 0.0005;
+
+        // Rotate the particle system as before
+        particleSystem.rotation.y = time * 0.2;
+        particleSystem.rotation.x = time * 0.1;
+
+        // Smooth mouse movement
+        mouseX += (targetMouseX - mouseX) * 0.05;
+        mouseY += (targetMouseY - mouseY) * 0.05;
+
+        // Auto rotation plus mouse influence
+        if (modelPivot) {
+          modelPivot.rotation.y += autoRotateSpeedY;
+          modelPivot.rotation.x += autoRotateSpeedX;
+
+          // Add an offset based on the mouse position
+          modelPivot.rotation.y += mouseX * mouseInfluenceY;
+          modelPivot.rotation.x += mouseY * mouseInfluenceX;
+        }
+
+        // Subtle camera motion for extra effect (optional)
+        camera.position.x = Math.sin(time * 0.3) * 2;
+        camera.position.y = Math.cos(time * 0.4) * 1;
+        camera.lookAt(scene.position);
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
+
+
+    function createAboutCanvas() {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.getElementById('about-canvas').appendChild(renderer.domElement);
+
+      const torusGeometry = new THREE.TorusKnotGeometry(8, 2.7, 100, 16);
+      const torusMaterial = new THREE.MeshBasicMaterial({
+        color: 0x99caff,
+        wireframe: true
+      });
+      const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+      scene.add(torus);
+
+      camera.position.z = 10;
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Smooth mouse movement
+        mouseX += (targetMouseX - mouseX) * 0.05;
+        mouseY += (targetMouseY - mouseY) * 0.05;
+
+        // Animate torus with mouse influence
+        torus.rotation.x += 0.005;
+        torus.rotation.y += 0.007;
+
+        // Add mouse-based rotation
+        torus.rotation.x += mouseX * 0.01;
+        torus.rotation.y += -mouseY * 0.01;
+
+        // Slightly move the torus based on mouse position
+        torus.position.x = mouseX * 2;
+        torus.position.y = mouseY * 2;
+
+        // Camera follows mouse slightly
+        camera.position.x = mouseX * 2;
+        camera.position.y = mouseY * 2;
+        camera.lookAt(scene.position);
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
+
+
+    function createProjectsCanvas() {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.getElementById('projects-canvas').appendChild(renderer.domElement);
+
+      // Create wave mesh
+      const waveGeometry = new THREE.PlaneGeometry(20, 20, 50, 50);
+      const waveMaterial = new THREE.MeshBasicMaterial({
+        color: 0x66a3ff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.8
+      });
+      const wave = new THREE.Mesh(waveGeometry, waveMaterial);
+      scene.add(wave);
+
+      // Store original positions for wave animation
+      const positions = waveGeometry.attributes.position.array;
+      const originalPositions = [...positions];
+
+      camera.position.z = 10;
+      camera.position.y = -2;
+      wave.rotation.x = -Math.PI / 4;
+
+      // Mouse interaction strength factor
+      let interactionStrength = 5;
+      let lastMouseX = 0;
+      let lastMouseY = 0;
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Smooth mouse movement
+        mouseX += (targetMouseX - mouseX) * 0.05;
+        mouseY += (targetMouseY - mouseY) * 0.05;
+
+        // Calculate mouse velocity for wave intensity
+        const mouseDeltaX = mouseX - lastMouseX;
+        const mouseDeltaY = mouseY - lastMouseY;
+        const mouseVelocity = Math.sqrt(mouseDeltaX * mouseDeltaX + mouseDeltaY * mouseDeltaY);
+
+        // Update interaction strength based on mouse velocity
+        interactionStrength = Math.min(1, interactionStrength + mouseVelocity * 2);
+        interactionStrength *= 0.95; // Decay factor
+
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
+
+        // Animate wave
+        const time = Date.now() * 0.001;
+        for (let i = 0; i < positions.length; i += 3) {
+          const x = originalPositions[i];
+          const y = originalPositions[i + 1];
+
+          // Distance from mouse position (projected onto plane)
+          const dx = x / 10 - mouseX * 5;
+          const dy = y / 10 - mouseY * 5;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          // Create wave effect influenced by mouse
+          let waveHeight = Math.sin(x / 2 + time) * Math.cos(y / 2 + time) * 0.5;
+
+          // Add mouse-driven ripple effect
+          if (distance < 5) {
+            // Create ripple from mouse movement
+            waveHeight += (1 - distance / 5) * interactionStrength * Math.sin(distance * 2 - time * 5) * 0.5;
+          }
+
+          positions[i + 2] = waveHeight;
+        }
+        waveGeometry.attributes.position.needsUpdate = true;
+
+        // Rotate wave slightly based on mouse
+        wave.rotation.x = -Math.PI / 4 + mouseY * 0.2;
+        wave.rotation.z = mouseX * 0.2;
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
+
+    // Add a ripple effect that follows clicks
+    function addClickRippleEffect() {
+      // Create a container for our ripples
+      const rippleContainer = document.createElement('div');
+      rippleContainer.style.position = 'fixed';
+      rippleContainer.style.top = '0';
+      rippleContainer.style.left = '0';
+      rippleContainer.style.width = '100%';
+      rippleContainer.style.height = '100%';
+      rippleContainer.style.pointerEvents = 'none';
+      rippleContainer.style.zIndex = '1';
+      document.body.appendChild(rippleContainer);
+
+      document.addEventListener('click', (event) => {
+        const ripple = document.createElement('div');
+        ripple.style.position = 'absolute';
+        ripple.style.borderRadius = '50%';
+        ripple.style.backgroundColor = 'rgba(102, 163, 255, 0.3)';
+        ripple.style.width = '10px';
+        ripple.style.height = '10px';
+        ripple.style.transform = 'translate(-50%, -50%)';
+        ripple.style.left = `${event.clientX}px`;
+        ripple.style.top = `${event.clientY}px`;
+
+        rippleContainer.appendChild(ripple);
+
+        // Animate ripple
+        gsap.to(ripple, {
+          width: '300px',
+          height: '300px',
+          opacity: 0,
+          duration: 1.5,
+          ease: 'power2.out',
+          onComplete: () => {
+            rippleContainer.removeChild(ripple);
+          }
+        });
+
+        // Add an additional burst effect
+        for (let i = 0; i < 8; i++) {
+          const particle = document.createElement('div');
+          particle.style.position = 'absolute';
+          particle.style.width = '8px';
+          particle.style.height = '8px';
+          particle.style.backgroundColor = 'rgba(102, 163, 255, 0.6)';
+          particle.style.borderRadius = '50%';
+          particle.style.transform = 'translate(-50%, -50%)';
+          particle.style.left = `${event.clientX}px`;
+          particle.style.top = `${event.clientY}px`;
+
+          rippleContainer.appendChild(particle);
+
+          // Random angle
+          const angle = (i / 8) * Math.PI * 2;
+
+          gsap.to(particle, {
+            x: Math.cos(angle) * 100,
+            y: Math.sin(angle) * 100,
+            opacity: 0,
+            duration: 1,
+            ease: 'power2.out',
+            onComplete: () => {
+              rippleContainer.removeChild(particle);
+            }
+          });
+        }
+
+        // Send a pulse through the 3D scenes
+        interactionStrength = 1;
+      });
+    }
+
+
+
+
+    // Add this code to your script section
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize other components first
+      createWelcomeCanvas();
+      createAboutCanvas();
+      createProjectsCanvas();
+      scrollToSection(0);
+
+      // Add loading effect
+      gsap.from('.welcome h1', { opacity: 0, y: 30, duration: 1, delay: 0.3 });
+      gsap.from('.welcome p', { opacity: 0, y: 30, duration: 1, delay: 0.5 });
+      gsap.from('.social-links', { opacity: 0, y: 30, duration: 1, delay: 0.7 });
+
+      // Initialize the typing animation after the initial animation completes
+      setTimeout(initTypeAnimation, 1500);
+    });
+
+    function initTypeAnimation() {
+      //   const welcomeHeading = document.querySelector('#welcome h1');
+      //   const originalText = welcomeHeading.textContent;
+
+      //   // Create a container with fixed height to prevent layout shifts
+      //   // welcomeHeading.innerHTML = 'im daniel tran<br><span id="typing-container"><span id="typing-text"></span></span>';
+      //   const typingElement = document.getElementById('typing-text');
+      //   const typingContainer = document.getElementById('typing-container');
+
+      //   // List of phrases to cycle through
+      //   const phrases = [
+      //     "Daniel Tran",
+      //     "@danieltrqn",
+      //     "/dvovera",
+      //     "Đăng",
+      //   ];
+
+      //   // Find the longest phrase to set the container width
+      //   let maxLength = 0;
+      //   phrases.forEach(phrase => {
+      //     if (phrase.length > maxLength) maxLength = phrase.length;
+      //   });
+
+      //   // Pre-calculate the space needed for the longest phrase
+      //   const tempSpan = document.createElement('span');
+      //   tempSpan.textContent = phrases.reduce((a, b) => a.length > b.length ? a : b);
+      //   tempSpan.style.visibility = 'hidden';
+      //   tempSpan.style.position = 'absolute';
+      //   tempSpan.style.fontSize = getComputedStyle(typingElement).fontSize;
+      //   tempSpan.style.fontFamily = getComputedStyle(typingElement).fontFamily;
+      //   document.body.appendChild(tempSpan);
+      //   const maxWidth = tempSpan.offsetWidth;
+      //   document.body.removeChild(tempSpan);
+
+      //   // Set minimum width for the container based on the longest phrase
+      //   typingContainer.style.display = 'inline-block';
+      //   typingContainer.style.minWidth = `${maxWidth}px`;
+      //   typingContainer.style.minHeight = '1.5em';
+      //   typingContainer.style.textAlign = 'left';
+
+      //   let phraseIndex = 0;
+      //   let charIndex = 0;
+      //   let isDeleting = false;
+      //   let typingSpeed = 100;
+
+      //   function typeText() {
+      //     const currentPhrase = phrases[phraseIndex];
+
+      //     if (isDeleting) {
+      //       // Deleting text
+      //       typingElement.textContent = currentPhrase.substring(0, charIndex - 1);
+      //       charIndex--;
+      //       typingSpeed = 50; // Faster when deleting
+      //     } else {
+      //       // Typing text
+      //       typingElement.textContent = currentPhrase.substring(0, charIndex + 1);
+      //       charIndex++;
+      //       typingSpeed = 100; // Normal speed when typing
+      //     }
+
+      //     // If finished typing the phrase
+      //     if (!isDeleting && charIndex === currentPhrase.length) {
+      //       // Pause at the end of the phrase before deleting
+      //       isDeleting = true;
+      //       typingSpeed = 1500; // Wait time before starting to delete
+      //     }
+
+      //     // If finished deleting the phrase
+      //     if (isDeleting && charIndex === 0) {
+      //       isDeleting = false;
+      //       // Move to next phrase
+      //       phraseIndex = (phraseIndex + 1) % phrases.length;
+      //       // Pause before typing the next phrase
+      //       typingSpeed = 500;
+      //     }
+
+      //     // Continue the animation loop
+      //     setTimeout(typeText, typingSpeed);
+      //   }
+
+      //   // Apply some styling to the typing element
+      //   typingElement.style.display = 'inline-block';
+      //   typingElement.style.color = 'var(--blue-text)';
+
+      //   // Start the typing animation
+      //   setTimeout(typeText, 1000);
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>daniel tran's portfolio</title>
+  <!-- Add these font imports -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500&family=Poppins:wght@200;300;400;500&family=Quicksand:wght@300;400;500&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.0/gsap.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+</head>
+
+<body>
+  <div class="progress-bar"></div>
+  <!-- <div class="cursor"></div>
+  <div class="cursor-dot"></div> -->
+  <div class="overlay"></div>
+
+  <div class="container">
+    <section class="section welcome active" id="welcome">
+      <div class="canvas-container" id="welcome-canvas"></div>
+      <h1>daniel tran</h1>
+      <!-- <p>Hello! I'm a developer passionate about creating beautiful and functional web experiences.</p> -->
+      <!-- <div class="social-links">
+        <a href="#" class="social-link" data-hover="true">GitHub</a>
+        <a href="#" class="social-link" data-hover="true">LinkedIn</a>
+        <a href="#" class="social-link" data-hover="true">Twitter</a>
+      </div> -->
+    </section>
+    <!-- Modified About Section -->
+    <section class="section about" id="about">
+      <h1>about me</h1>
+      <p>I want to make cool things or silly things or meaningful things.</p>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/danieltrqn/" target="_blank" class="social-link">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="https://github.com/dvovera" target="_blank" class="social-link">
+          <i class="fab fa-github"></i>
+        </a>
+
+
+      </div>
+
+      <div class="scroll-container">
+        <div class="scrolling-container">
+          <div class="canvas-container" id="about-canvas"></div>
+
+          <div class="about-tabs">
+            <button class="tab-btn active" data-tab="education-experience">Education & Experience</button>
+            <button class="tab-btn" data-tab="skills-awards">Skills & Awards</button>
+          </div>
+
+          <div class="tab-content">
+            <!-- Skills & Awards Tab -->
+            <div class="tab-pane" id="skills-awards-tab">
+              <div class="scrollable-content">
+                <h2 class="section-subtitle">Skills</h2>
+                <div class="skill-list">
+                  <span class="skill" data-hover="true">HTML5</span>
+                  <span class="skill" data-hover="true">CSS3</span>
+                  <span class="skill" data-hover="true">JavaScript</span>
+                  <span class="skill" data-hover="true">Python</span>
+                  <span class="skill" data-hover="true">Three.js</span>
+                  <span class="skill" data-hover="true">React.js</span>
+                  <span class="skill" data-hover="true">React Native</span>
+
+                </div>
+
+                <h2 class="section-subtitle">Awards</h2>
+                <div class="awards-grid">
+                  <div class="award-card">
+                    <!-- <div class="award-icon">🏆</div> -->
+                    <h3>
+                      FTC Robotics Provincial Connect Award</h3>
+                    <p>Led and founded Pearson College UWC's inaugural robotics team, Pearsonites, which received this
+                      award
+                    </p>
+                    <p></p>
+                  </div>
+                  <div class="award-card">
+                    <!-- <div class="award-icon">🎨</div> -->
+                    <h3>Grant MacEwan United World College Scholarship</h3>
+                    <p>Received a $130 000 scholarship to attend a United World College
+                    </p>
+                    <!-- <p>For innovative UI/UX approach in 3D web interfaces</p> -->
+                  </div>
+                  <div class="award-card">
+                    <!-- <div class="award-icon">⭐</div> -->
+                    <h3>My Money My Future 3rd Place</h3>
+                    <p>Awarded $2500 for developing a game for kids educating about financial literacy
+                    </p>
+                  </div>
+                  <div class="award-card">
+                    <!-- <div class="award-icon">⭐</div> -->
+                    <h3>National Semi-Finalist CyberPatriots Team</h3>
+                    <p>Team captain of national semi-finalist team (top 8% of teams)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Education & Experience Tab -->
+            <div class="tab-pane active" id="education-experience-tab">
+              <div class="scrollable-content">
+                <div class="timeline">
+
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content education">
+                      <h3>Bachelor's of Engineering</h3>
+                      <h4>University of Alberta | Edmonton, Alberta</h4>
+                      <p class="timeline-date">2024-2028 | GPA: 4.0</p>
+                      <p>Intending to pursue a BSc in Mechatronics and Robotics Engineering</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <h3>Programming Instructor</h3>
+                      <h4>CodeNinjas Tamarack | Edmonton, Alberta</h4>
+                      <p class="timeline-date">2024-present</p>
+                      <p>Taught students aged 7–14 fundamental programming concepts using Microsoft’s MakeCode Arcade
+                        platform, by focusing on game development and interactive learning</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <h3>Chapter Manager</h3>
+                      <h4>iTutorAcademy South | Edmonton, Alberta</h4>
+                      <p class="timeline-date">2024-present</p>
+                      <p>Managed the end-to-end hiring process, including recruitment, interviews, onboarding, and
+                        training for new tutors</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content education">
+                      <h3>International Baccalaureate Diploma</h3>
+                      <h4>Pearson UWC International School | Victoia, British Columbia</h4>
+                      <p class="timeline-date">2022-2024</p>
+                      <p>Received a full-ride merit scholarship valued at $130 000 to attend</p>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <style>
+      /* About Tabs Styling */
+      .about-tabs {
+        display: flex;
+        justify-content: center;
+        margin: 2rem 0 1.5rem;
+        gap: 0.8rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease 0.5s;
+      }
+
+      .section.active .about-tabs {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .tab-btn {
+        background-color: var(--blue-lightest);
+        color: var(--black);
+        border: none;
+        padding: 0.5rem 1.2rem;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        font-weight: 500;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .tab-btn:hover {
+        background-color: var(--blue-light);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .tab-btn.active {
+        background-color: var(--black);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .tab-content {
+        width: 100%;
+        /* width: 800px; */
+        max-width: 800px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease 0.7s;
+        height: 450px;
+        /* Fixed height for scrollable area */
+      }
+
+      .section.active .tab-content {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .tab-pane {
+        width: 100%;
+        display: none;
+        opacity: 0;
+        /* transform: translateY(10px); */
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        /* height: 100%; */
+      }
+
+      .tab-pane.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Scrollable Content */
+      .scrollable-content {
+        height: 100%;
+        overflow-y: auto;
+        padding-right: 15px;
+        /* Space for scrollbar */
+        scrollbar-width: thin;
+        scrollbar-color: var(--blue-medium) var(--blue-lightest);
+        margin-bottom: 50px;
+      }
+
+      /* Custom scrollbar styling for WebKit browsers */
+      .scrollable-content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .scrollable-content::-webkit-scrollbar-track {
+        background: var(--blue-lightest);
+        border-radius: 10px;
+      }
+
+      .scrollable-content::-webkit-scrollbar-thumb {
+        background-color: var(--blue-medium);
+        border-radius: 10px;
+        border: 2px solid var(--blue-lightest);
+      }
+
+      .scrollable-content::-webkit-scrollbar-thumb:hover {
+        background-color: var(--blue-dark);
+      }
+
+      /* Section Subtitle */
+      .section-subtitle {
+        font-size: 1.4rem;
+        margin: 1.8rem 0 1rem;
+        color: var(--black);
+        position: relative;
+        padding-bottom: 0.6rem;
+      }
+
+      .section-subtitle:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 60px;
+        height: 2px;
+        background-color: var(--light-black);
+      }
+
+      .section-subtitle:first-child {
+        margin-top: 0;
+      }
+
+      /* Skills Styling */
+      .skill-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin: 1rem 0 2rem;
+      }
+
+      .skill {
+        background-color: var(--blue-lightest);
+        color: var(--black);
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .skill:hover {
+        background-color: var(--blue-light);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Timeline Styling */
+      .timeline {
+        position: relative;
+        padding: 0 0 0 0;
+        max-width: 700px;
+        margin: 0 auto;
+        margin-left: 1rem;
+      }
+
+      .timeline:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 2px;
+        height: 100%;
+        background-color: var(--black);
+      }
+
+      .timeline-item {
+        position: relative;
+        padding-left: 3rem;
+        margin-bottom: 2rem;
+        overflow: visible;
+      }
+
+      .timeline-item:last-child {
+        margin-bottom: 1rem;
+        /* Add some spacing at the bottom of the timeline */
+      }
+
+      .timeline-dot {
+        position: absolute;
+        left: -0.5rem;
+        top: 0;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background-color: var(--light-black);
+        border: 3px solid var(--blue-lightest);
+        /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); */
+        overflow: visible;
+      }
+
+      .timeline-content {
+        background-color: white;
+        padding: 1.2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid var(--black);
+      }
+
+      .timeline-content.education {
+        border-left: 4px solid var(--blue-dark);
+      }
+
+      .timeline-content.education h3 {
+        font-size: 1.3rem;
+        margin: 0 0 0.3rem;
+        color: var(--black);
+      }
+
+      .timeline-content h3 {
+        font-size: 1.3rem;
+        margin: 0 0 0.3rem;
+        color: var(--black);
+      }
+
+      .timeline-content h4 {
+        font-size: 1.1rem;
+        margin: 0 0 0.3rem;
+        color: var(--light-black);
+        font-weight: 400;
+      }
+
+      .timeline-date {
+        font-size: 0.9rem;
+        color: var(--lighter-black);
+        margin-bottom: 0.8rem;
+        font-weight: 500;
+      }
+
+      .timeline-content p {
+        margin: 0;
+        text-align: left;
+        font-size: 1rem;
+        line-height: 1.6;
+        transition: none;
+        opacity: 1;
+        transform: none;
+      }
+
+      /* Awards Styling */
+      .awards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        width: 100%;
+        max-width: 800px;
+        margin-bottom: 1.5rem;
+        /* Bottom spacing for scrollable area */
+      }
+
+      .award-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+        border-top: 4px solid var(--black);
+      }
+
+      .award-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      }
+
+      .award-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .award-card h3 {
+        font-size: 1.2rem;
+        margin: 0 0 0.5rem;
+        color: var(--black);
+      }
+
+      .award-card p {
+        margin: 0.2rem 0;
+        font-size: 0.95rem;
+        color: var(--text-light);
+        text-align: center;
+        transition: none;
+        opacity: 1;
+        transform: none;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .about-tabs {
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .tab-btn {
+          font-size: 0.9rem;
+          padding: 0.4rem 1rem;
+        }
+
+        .tab-content {
+          height: 400px;
+          /* Slightly smaller height on mobile */
+        }
+
+        .timeline:before {
+          left: 18px;
+        }
+
+        .timeline-item {
+          padding-left: 3rem;
+        }
+
+        .timeline-dot {
+          left: 10px;
+        }
+
+        .awards-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-subtitle {
+          font-size: 1.3rem;
+          margin: 1.5rem 0 0.8rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .tab-content {
+          height: 350px;
+          /* Even smaller height on very small screens */
+        }
+      }
+
+      .scrolling-container {
+        /* width: 100%; */
+        width: 800px;
+        max-width: 800px;
+        margin: 0 auto;
+        padding-right: 10px;
+        height: 100%;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    </style>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Tab functionality for About section
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        function activateTab(tabName) {
+          // Hide all tab panes
+          tabPanes.forEach(pane => {
+            pane.classList.remove('active');
+          });
+
+          // Deactivate all tab buttons
+          tabButtons.forEach(btn => {
+            btn.classList.remove('active');
+          });
+
+          // Activate the selected tab and its content
+          document.querySelector(`#${tabName}-tab`).classList.add('active');
+          document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        }
+
+        // click event to tab buttons
+        tabButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const tabName = button.getAttribute('data-tab');
+            activateTab(tabName);
+          });
+        });
+
+        tabButtons.forEach(btn => {
+          btn.setAttribute('data-hover', 'true');
+        });
+      });
+    </script>
+    <section class="section projects" id="projects">
+      <div class="canvas-container" id="projects-canvas"></div>
+      <h1>projects</h1>
+      <div class="projects-container">
+
+      </div>
+    </section>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" data-section="welcome" data-hover="true">Home</button>
+    <button class="nav-btn" data-section="about" data-hover="true">About</button>
+    <button class="nav-btn" data-section="projects" data-hover="true">Projects</button>
+  </div>
+  <!-- 
+  <div class="scroll-indicator">
+    <span class="scroll-dot active" data-section="welcome"></span>
+    <span class="scroll-dot" data-section="about"></span>
+    <span class="scroll-dot" data-section="projects"></span>
+  </div> -->
+
+  <!-- Project Sidebar -->
+  <div class="project-sidebar">
+    <div class="sidebar-header">
+      <h2>Project Details</h2>
+      <button class="close-sidebar" data-hover="true">×</button>
+    </div>
+    <div class="sidebar-content">
+    </div>
+  </div>
+
+  <script>
+
+
+  </script>
+  <script src="js/navigation.js"></script>
+  <script src="js/projects.js"></script>
+  <script src="js/threeDeffects.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>
