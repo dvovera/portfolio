@@ -206,7 +206,7 @@ function generateProjectCards() {
     projectCard.innerHTML = `
       <h3>${projectData.title}</h3>
       <p>${projectData.description}</p>
-      <p>
+      <p class="tech-list">
         ${projectData.technologies
           .slice(0, 3)
           .map((tech) => `<span class="tech-tag">${tech}</span>`)
