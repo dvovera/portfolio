@@ -212,7 +212,8 @@ p {
 
 .tech-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
   margin-top: auto;
   /* opacity: 0; */
 }
@@ -574,7 +575,8 @@ body {
 
 .tech-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
   gap: 0.6rem;
   margin-bottom: 1.5rem;
 }

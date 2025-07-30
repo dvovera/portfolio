@@ -1,99 +1,64 @@
 // Project data
 const projectsData = {
+  syntaxis: {
+    title: "Syntaxis",
+    description:
+      "A text-based AI-powered language learning game where you explore lost civilizations and artifacts.",
+    longDescription:
+      "A language-learning game set in procedurally generated civilizations. Each playthrough invents a unique culture with its own beliefs about language, sacred or taboo words, and mysterious linguistic rituals. Players explore real-world languages (like French or Dutch) through the eyes of fictional societies, exploring AI-generated artifacts and conversations unveailing the mysteries of the civilization.",
+    technologies: ["react", "mistral ai"],
+    features: [],
+    image: "public/syntaxis.gif",
+    links: [{ label: "Try it", url: "https://syntaxis.vercel.app/" }],
+  },
   "the-orable": {
     title: "The Orable",
     description: "Let an AI oracle read your future using Tarot cards!",
-    longDescription: "Unsure about your future? Ask the oracle!",
-    technologies: [
-      "Three.js",
-      "React",
-      "WebGL",
-      "JavaScript",
-      "GLSL Shaders",
-      "React Three Fiber",
-    ],
+    longDescription:
+      "An AI-powered tarot reading experience that combines Mistral AI with traditional Tarot card interpretations to provide personalized insights and guidance for life's hardest questions.",
+    technologies: ["html", "js", "css", "mistral ai"],
     features: [],
-    image: "the_orable.gif",
+    image: "public/the_orable.gif",
     links: [
       { label: "Try it", url: "https://dvovera.github.io/The-Orable/" },
       { label: "Github", url: "https://github.com/dvovera/The-Orable" },
-      // Example of additional link
     ],
   },
-  "product-visualizer": {
-    title: "3D Product Visualizer",
+  "wordbomb-exploit": {
+    title: "Word Bomb Exploit",
     description:
-      "An interactive 3D product configurator that allows users to customize and view products in real-time.",
+      "Automate your Word Bomb gameplay with real-time OCR and auto-typing",
     longDescription:
-      "This project was designed to solve the common e-commerce problem of customers wanting to see products from all angles before purchasing. The visualizer allows users to rotate, zoom, and customize various product features including colors, materials, and add-ons, all in a real-time 3D environment.<br><br>The application features realistic lighting, textures, and physics-based rendering to provide an accurate representation of the products. Performance optimization was a key challenge, requiring techniques like level-of-detail rendering and texture compression.",
-    technologies: [
-      "Three.js",
-      "React",
-      "WebGL",
-      "JavaScript",
-      "GLSL Shaders",
-      "React Three Fiber",
+      "A Python macro for the game BombParty/Word Bomb that uses OCR (Optical Character Recognition) to read the screen for target letters and auto-types a valid word to help you win. In the gif above they banned me from their lobby, due to the 777wpm (which can be changed).",
+    technologies: ["python", "tesseract-ocr", "tkinter"],
+    features: [],
+    image: "public/wordbomb.gif",
+    links: [
+      { label: "Github", url: "https://github.com/dvovera/wordbomb-macro" },
     ],
-    features: [
-      "Real-time 3D rendering",
-      "Interactive color and material selection",
-      "Product configuration saving and sharing",
-      "Mobile-responsive design",
-      "High-performance rendering optimizations",
-    ],
-    image: "/api/placeholder/400/250", // Using placeholder as per instructions
-    demoLink: "#",
-    codeLink: "#",
   },
-  "data-dashboard": {
-    title: "Data Visualization Dashboard",
+
+  "school-app": {
+    title: "School News App",
     description:
-      "A responsive dashboard for visualizing complex datasets with interactive elements.",
+      "An app for my school's student groups to share news and events.",
     longDescription:
-      "This dashboard was created for a financial technology company to help their clients visualize and analyze market trends and portfolio performance. The dashboard combines multiple visualization types including line charts, bar graphs, heat maps, and interactive tables to provide a comprehensive view of complex financial data.<br><br>One of the key challenges was optimizing performance when rendering large datasets. This was achieved through data aggregation techniques, lazy loading, and efficient DOM manipulation.",
-    technologies: [
-      "D3.js",
-      "JavaScript",
-      "CSS Grid",
-      "SVG",
-      "REST API",
-      "Chart.js",
-    ],
-    features: [
-      "Real-time data updates",
-      "Interactive filtering and sorting",
-      "Customizable dashboard layouts",
-      "Export capabilities (PDF, CSV)",
-      "Cross-browser compatibility",
-    ],
-    image: "/api/placeholder/400/250", // Using placeholder as per instructions
-    demoLink: "#",
-    codeLink: "#",
+      "A React Native app for school clubs to post announcements and events. It uses Firebase for real-time updates, with a feed interface for students to stay informed and engaged.",
+
+    technologies: ["react native", "firebase"],
+    features: [],
+    image: "public/schoolapp.gif", // Using placeholder as per instructions
   },
-  "portfolio-site": {
-    title: "Interactive Portfolio Site",
-    description:
-      "A creative portfolio website featuring 3D animations and interactive elements to showcase my work and skills.",
-    longDescription:
-      "This portfolio site was designed to demonstrate my capabilities in creating immersive web experiences. It features custom 3D backgrounds on each section, smooth transitions between pages, and interactive elements that respond to user input.<br><br>The site is built with performance in mind, ensuring that the 3D elements and animations don't compromise load times or responsiveness across devices. The Three.js elements are optimized through techniques like object pooling and scene management.",
-    technologies: [
-      "Three.js",
-      "GSAP",
-      "HTML/CSS",
-      "JavaScript",
-      "Responsive Design",
-      "WebGL",
-    ],
-    features: [
-      "Custom 3D animated backgrounds",
-      "Smooth page transitions",
-      "Interactive project showcases",
-      "Responsive design for all devices",
-      "Performance-optimized animations",
-    ],
+  "music-portfolio": {
+    title: "Music Portfolio",
+    description: "Check out my compositions!",
+    longDescription: "",
+    technologies: ["musescore", "the piano"],
+    features: [],
     image: "/api/placeholder/400/250", // Using placeholder as per instructions
-    demoLink: "#",
+    demoLink: "https://dvovera.github.io/music/",
     codeLink: "#",
+    externalLink: "https://dvovera.github.io/music/",
   },
 };
 
@@ -203,12 +168,26 @@ function generateProjectCards() {
     projectCard.setAttribute("data-hover", "true");
     projectCard.setAttribute("data-project", projectId);
 
+    // Determine how many technologies to show based on their length
+    const techs = projectData.technologies;
+    let techsToShow = 2; // Default to 2
+
+    // If we have 3 or more technologies, check if they'll fit
+    if (techs.length >= 3) {
+      const totalLength = techs[0].length + techs[1].length + techs[2].length;
+      // If total length is reasonable (less than ~20 characters), show 3
+      // This accounts for spaces and ensures no wrapping
+      if (totalLength <= 20) {
+        techsToShow = 3;
+      }
+    }
+
     projectCard.innerHTML = `
       <h3>${projectData.title}</h3>
       <p>${projectData.description}</p>
       <p class="tech-list">
-        ${projectData.technologies
-          .slice(0, 3)
+        ${techs
+          .slice(0, techsToShow)
           .map((tech) => `<span class="tech-tag">${tech}</span>`)
           .join("")}
       </p>
@@ -216,6 +195,12 @@ function generateProjectCards() {
     `;
 
     projectCard.addEventListener("click", () => {
+      // Check if this project has an external link (like music portfolio)
+      if (projectData.externalLink) {
+        window.open(projectData.externalLink, "_blank");
+        return;
+      }
+
       const sidebar = document.querySelector(".project-sidebar");
       const sidebarContent = document.querySelector(".sidebar-content");
 
