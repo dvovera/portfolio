@@ -43,7 +43,7 @@ body {
   padding-bottom: 0;
   position: relative;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(0);
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
