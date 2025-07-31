@@ -1,10 +1,8 @@
-// Add these mouse tracking variables at the beginning of your script section
 let mouseX = 0;
 let mouseY = 0;
 let targetMouseX = 0;
 let targetMouseY = 0;
 
-// Track mouse position
 document.addEventListener("mousemove", (event) => {
   // Normalize mouse coordinates between -1 and 1
   targetMouseX = (event.clientX / window.innerWidth) * 2 - 1;
@@ -87,17 +85,15 @@ document.addEventListener("keydown", (e) => {
 // ————————————————————————————————————————————————
 let accumulatedDelta = 0;
 let canScroll = true;
-const SCROLL_THRESHOLD = 100; // ↑ bigger = less sensitive
-const FALLBACK_MS = 1000; // max wait if transitionend fails
+const SCROLL_THRESHOLD = 100;
+const FALLBACK_MS = 1000;
 
-// Listen for the end of your CSS slide animation
 container.addEventListener("transitionend", (e) => {
   if (e.propertyName === "transform") {
     canScroll = true;
   }
 });
 
-// Replace both of your old wheel listeners with this:
 function onWheel(e) {
   const sidebar = document.querySelector(".project-sidebar");
   if (sidebar?.classList.contains("open")) {
