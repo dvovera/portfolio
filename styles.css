@@ -545,7 +545,7 @@ body {
 
 .project-sidebar h2 {
   font-size: 2rem;
-  color: var(--text-dark);
+  color: var(--black);
   /* margin-bottom: 1rem; */
 }
 

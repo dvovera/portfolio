@@ -6,7 +6,7 @@ const projectsData = {
       "A text-based AI-powered language learning game where you explore lost civilizations and artifacts.",
     longDescription:
       "A language-learning game set in procedurally generated civilizations. Each playthrough invents a unique culture with its own beliefs about language, sacred or taboo words, and mysterious linguistic rituals. Players explore real-world languages (like French or Dutch) through the eyes of fictional societies, exploring AI-generated artifacts and conversations unveailing the mysteries of the civilization.",
-    technologies: ["react", "mistral ai"],
+    technologies: ["react", "mistral ai", "tailwind css"],
     features: [],
     image: "public/syntaxis.gif",
     links: [{ label: "Try it", url: "https://syntaxis.vercel.app/" }],
@@ -48,6 +48,20 @@ const projectsData = {
     technologies: ["react native", "firebase"],
     features: [],
     image: "public/schoolapp.gif", // Using placeholder as per instructions
+  },
+  "chem-kinetics-sim": {
+    title: "Chemistry Kinetics Simulator",
+    description:
+      "A web-based interactive simulator for exploring chemical reaction kinetics.",
+    longDescription:
+      "Get a visual and tangible understanding of chemical kinetics. This simulator allows you to define elementary reactions, adjust parameters like temperature and volume, and see how species react and evolve over time through dynamic plots. Test out Le Chatelier's principle and see how changing the parameters affects the equilibrium.",
+    technologies: ["html", "js", "css"],
+    features: [],
+    links: [
+      { label: "Try it", url: "https://dvovera.github.io/chem-kinetics-sim/" },
+      { label: "Github", url: "https://github.com/dvovera/chem-kinetics-sim" },
+    ],
+    image: "public/kinetics.gif", // Use an appropriate placeholder, or update with actual screen recording/gif.
   },
   "music-portfolio": {
     title: "Music Portfolio",
