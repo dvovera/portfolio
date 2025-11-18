@@ -11,6 +11,17 @@ const projectsData = {
     image: "public/syntaxis.gif",
     links: [{ label: "Try it", url: "https://syntaxis.vercel.app/" }],
   },
+  albertaBionix: {
+    title: "Alberta Bionix Website",
+    description:
+      "A modern, responsive website built for Alberta Bionix, showcasing the team’s projects and mission.",
+    longDescription:
+      "A fully responsive and performance-optimized website designed and developed for Alberta Bionix, a student biomedical engineering team. The site presents the team’s mission, members, ongoing projects, and outreach in a clean, accessible layout. Built with a focus on clarity, fast loading, and mobile-first design, the website serves as the team’s central online presence and recruitment portal.",
+    technologies: ["react", "next.js", "tailwind css"],
+    features: [],
+    image: "public/alberta-bionix.gif",
+    links: [{ label: "Visit site", url: "https://albertabionix.ca/" }],
+  },
   "the-orable": {
     title: "The Orable",
     description: "Let an AI oracle read your future using Tarot cards!",
@@ -24,6 +35,24 @@ const projectsData = {
       { label: "Github", url: "https://github.com/dvovera/The-Orable" },
     ],
   },
+  glossle: {
+    title: "Glossle",
+    description:
+      "A Wordle-inspired language deduction game where players decode foreign-language sentences.",
+    longDescription:
+      "Glossle is a puzzle-based language game that combines translation, pattern recognition, and logical deduction. Each puzzle presents a short dialogue in a foreign language—such as German—and challenges players to translate a highlighted sentence into English. As players guess words, the interface provides Wordle-style feedback to help narrow down correct translations. Glossle encourages intuitive language learning by immersing players in realistic sentences and requiring them to infer grammar, vocabulary, and meaning through context clues.",
+    technologies: ["react", "next.js", "tailwind css"],
+    features: [
+      "Wordle-style deduction mechanics for language learning",
+      "Context-rich dialogues instead of isolated vocabulary",
+      "Interactive feedback with colored correctness indicators",
+      "Hint system and puzzle generation pipeline",
+      "Clean UI optimized for quick, daily-play puzzles",
+    ],
+    image: "public/glossle.png",
+    links: [{ label: "Try it", url: "https://glossle.vercel.app/" }],
+  },
+
   "wordbomb-exploit": {
     title: "Word Bomb Exploit",
     description:
