@@ -17,7 +17,7 @@ const projectsData = {
       "A modern, responsive website built for Alberta Bionix, showcasing the team’s projects and mission.",
     longDescription:
       "A fully responsive and performance-optimized website designed and developed for Alberta Bionix, a student biomedical engineering team. The site presents the team’s mission, members, ongoing projects, and outreach in a clean, accessible layout. Built with a focus on clarity, fast loading, and mobile-first design, the website serves as the team’s central online presence and recruitment portal.",
-    technologies: ["react", "next.js", "tailwind css"],
+    technologies: ["react", "tailwind css"],
     features: [],
     image: "public/alberta-bionix.gif",
     links: [{ label: "Visit site", url: "https://albertabionix.ca/" }],
