@@ -49,7 +49,7 @@ const projectsData = {
       "Hint system and puzzle generation pipeline",
       "Clean UI optimized for quick, daily-play puzzles",
     ],
-    image: "public/glossle.png",
+    image: "public/glossle.gif",
     links: [{ label: "Try it", url: "https://glossle.vercel.app/" }],
   },
 
