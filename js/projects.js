@@ -40,7 +40,7 @@ const projectsData = {
     description:
       "A Wordle-inspired language deduction game where players decode foreign-language sentences.",
     longDescription:
-      "Glossle is a puzzle-based language game that combines translation, pattern recognition, and logical deduction. Each puzzle presents a short dialogue in a foreign language—such as German—and challenges players to translate a highlighted sentence into English. As players guess words, the interface provides Wordle-style feedback to help narrow down correct translations. Glossle encourages intuitive language learning by immersing players in realistic sentences and requiring them to infer grammar, vocabulary, and meaning through context clues.",
+      "Glossle is a puzzle-based language game that combines translation, pattern recognition, and logical deduction. Each puzzle presents a short dialogue in a foreign language and challenges players to translate a sentence into English by being immersed in realistic sentences and requiring them to infer grammar, vocabulary, and meaning through context clues.",
     technologies: ["react", "next.js", "tailwind css"],
     features: [
       "Wordle-style deduction mechanics for language learning",
