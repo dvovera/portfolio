@@ -80,6 +80,15 @@
                 <h2 class="section-subtitle">Awards</h2>
                 <div class="awards-grid">
                   <div class="award-card">
+                    <h3>George Grover Leadership Scholarship</h3>
+                    <p>
+                      Awarded $10 000 (Aug 2025) for outstanding academic
+                      achievement and leadership. One of the University of
+                      Alberta's largest scholarships, awarded to only 3
+                      students each year.
+                    </p>
+                  </div>
+                  <div class="award-card">
                     <!-- <div class="award-icon">🏆</div> -->
                     <h3>
                       Craighton Twa Engineering Scholarship & Gold Standard
@@ -122,7 +131,7 @@
                     <!-- <div class="award-icon">⭐</div> -->
                     <h3>My Money My Future 3rd Place</h3>
                     <p>
-                      Awarded $2500 for developing a game for kids educating
+                      Awarded $2500 by CIBC for developing a game for kids educating
                       about financial literacy
                     </p>
                   </div>
@@ -148,8 +157,10 @@
                     <div class="timeline-content education">
                       <div class="timeline-badge">EDU</div>
                       <h3>BSc Mechatronics and Robotics Engineering Co-op</h3>
-                      <h4>University of Alberta | Edmonton, Alberta</h4>
-                      <p class="timeline-date">2024-2029 | GPA: 3.9</p>
+                      <div class="timeline-meta">
+                        <h4>University of Alberta | Edmonton, Alberta</h4>
+                        <p class="timeline-date">2024-2029 | GPA: 3.9</p>
+                      </div>
                       <p>
                         Vice President Internal of the Mechatronics Engineering
                         Students' Association
@@ -160,9 +171,33 @@
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                       <div class="timeline-badge">EXP</div>
+                      <h3>Undergraduate Researcher in Fluid Dynamics</h3>
+                      <div class="timeline-meta">
+                        <h4>
+                          National Research Council Canada (NRC) | Edmonton,
+                          Alberta
+                        </h4>
+                        <p class="timeline-date">Sep 2025-present</p>
+                      </div>
+                      <p>
+                        Researching ionic liquid-water droplet impacts on
+                        heated surfaces in NRC's Fluids & Interfaces Group.
+                        Running high-speed imaging experiments, quantifying
+                        impact/spreading/phase-change dynamics in ImageJ, and
+                        training ML models to predict droplet phase diagrams
+                        and Leidenfrost temperature.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <div class="timeline-badge">EXP</div>
                       <h3>Programming Instructor</h3>
-                      <h4>CodeNinjas Tamarack | Edmonton, Alberta</h4>
-                      <p class="timeline-date">2024-present</p>
+                      <div class="timeline-meta">
+                        <h4>CodeNinjas Tamarack | Edmonton, Alberta</h4>
+                        <p class="timeline-date">2024-present</p>
+                      </div>
                       <p>
                         Taught students aged 7–14 fundamental programming
                         concepts using Microsoft’s MakeCode Arcade platform,
@@ -176,8 +211,10 @@
                     <div class="timeline-content">
                       <div class="timeline-badge">EXP</div>
                       <h3>Chapter Manager</h3>
-                      <h4>iTutorAcademy South | Edmonton, Alberta</h4>
-                      <p class="timeline-date">2024-present</p>
+                      <div class="timeline-meta">
+                        <h4>iTutorAcademy South | Edmonton, Alberta</h4>
+                        <p class="timeline-date">2024-present</p>
+                      </div>
                       <p>
                         Managed the end-to-end hiring process, including
                         recruitment, interviews, onboarding, and training for
@@ -190,11 +227,13 @@
                     <div class="timeline-content education">
                       <div class="timeline-badge">EDU</div>
                       <h3>International Baccalaureate Diploma</h3>
-                      <h4>
-                        Pearson UWC International School | Victoia, British
-                        Columbia
-                      </h4>
-                      <p class="timeline-date">2022-2024</p>
+                      <div class="timeline-meta">
+                        <h4>
+                          Pearson UWC International School | Victoia, British
+                          Columbia
+                        </h4>
+                        <p class="timeline-date">2022-2024</p>
+                      </div>
                       <p>
                         Received a full-ride merit scholarship valued at $130
                         000 to attend
@@ -495,12 +534,27 @@
         font-weight: 400;
       }
 
+      .timeline-meta {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.8rem;
+        margin: 0 0 0.18rem;
+      }
+
+      .timeline-meta h4 {
+        margin: 0;
+        min-width: 0;
+      }
+
       .timeline-date {
         font-size: 0.9rem;
         color: var(--lighter-black);
-        margin-bottom: 0.4rem;
+        margin: 0;
         line-height: 1.25;
         font-weight: 500;
+        white-space: nowrap;
+        text-align: right;
       }
 
       .timeline-content p {
@@ -725,6 +779,14 @@
         .timeline-content h4,
         .timeline-content p {
           overflow-wrap: anywhere;
+        }
+
+        .timeline-meta {
+          flex-wrap: wrap;
+        }
+
+        .timeline-meta .timeline-date {
+          margin-left: auto;
         }
       }
     </style>
