@@ -179,27 +179,52 @@ p {
 
 .cad-desc-panel {
   width: 380px;
-  background: white;
-  border-left: 1px solid var(--blue-light);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--blue-light);
+  border-radius: 0;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.08);
   margin-right: 2.5rem;
   height: 60vh;
   align-self: center;
-  padding: 6rem 1.2rem 1.2rem;
+  padding: 1rem;
   overflow-y: auto;
+  backdrop-filter: blur(8px);
 }
 
 #cad-desc-image {
   width: 100%;
-  max-height: 230px;
+  max-height: 220px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 1rem;
+  border: 1px solid var(--blue-light);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
 }
 
 #cad-desc-text {
   color: var(--text-dark);
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: 0.98rem;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  text-wrap: pretty;
+  padding: 0.1rem 0.25rem 0 0.1rem;
+}
+
+#cad-desc-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+#cad-desc-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#cad-desc-panel::-webkit-scrollbar-thumb {
+  background: var(--blue-light);
+  border-radius: 999px;
+}
+
+#cad-desc-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--blue-medium);
 }
 
 .cad-arr {
