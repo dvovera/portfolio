@@ -224,6 +224,12 @@
         opacity: 1;
         transform: none;
         transition: none;
+
+      }
+
+      .section.about .social-links {
+        display: flex;
+        margin-bottom: 5px;
       }
 
       .section.about .social-link {
@@ -833,6 +839,15 @@
         return a + (b - a) * t;
       }
 
+      function isCadSectionActive() {
+        return !document.hidden && cadSection.classList.contains("active");
+      }
+
+      function circularDistance(a, b, length) {
+        const diff = Math.abs(a - b);
+        return Math.min(diff, length - diff);
+      }
+
       const CARD_W = 280;
       const CARD_H = 320;
       const total = MODELS.length;
@@ -1080,6 +1095,8 @@
 
       function animate() {
         requestAnimationFrame(animate);
+        if (!isCadSectionActive()) return;
+
         currentAngle = lerp(currentAngle, targetAngle, 0.1);
         track.style.transform = `rotateY(${(currentAngle * 180) / Math.PI}deg)`;
 
@@ -1091,7 +1108,10 @@
         });
 
         renderers.forEach((renderer, i) => {
-          renderer.render(scenes[i], cameras[i]);
+          const dist = circularDistance(i, activeIndex, total);
+          if (dist <= 1 || i === draggingModelIndex) {
+            renderer.render(scenes[i], cameras[i]);
+          }
         });
       }
 

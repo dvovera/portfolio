@@ -1,5 +1,20 @@
 // *** OPTIMIZED 3D BACKGROUND EFFECTS ***
 
+const MAX_RENDER_PIXEL_RATIO = 1.5;
+
+function applyRendererSize(renderer, width, height) {
+  renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio || 1, MAX_RENDER_PIXEL_RATIO),
+  );
+  renderer.setSize(width, height);
+}
+
+function isSectionActive(sectionId) {
+  if (document.hidden) return false;
+  const section = document.getElementById(sectionId);
+  return section ? section.classList.contains("active") : true;
+}
+
 // Update the welcome canvas function to be mouse interactive
 function createWelcomeCanvas() {
   const scene = new THREE.Scene();
@@ -10,7 +25,7 @@ function createWelcomeCanvas() {
     1000,
   );
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   document.getElementById("welcome-canvas").appendChild(renderer.domElement);
 
   let modelPivot;
@@ -101,6 +116,8 @@ function createWelcomeCanvas() {
 
   function animate() {
     requestAnimationFrame(animate);
+    if (!isSectionActive("welcome")) return;
+
     const time = Date.now() * 0.0005;
 
     // Rotate the particle system as before
@@ -133,7 +150,7 @@ function createWelcomeCanvas() {
   window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   });
 }
 
@@ -147,7 +164,7 @@ function createAboutCanvas() {
   );
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   document.getElementById("about-canvas").appendChild(renderer.domElement);
 
   const torusGeometry = new THREE.TorusKnotGeometry(8, 2.7, 100, 16);
@@ -162,6 +179,7 @@ function createAboutCanvas() {
 
   function animate() {
     requestAnimationFrame(animate);
+    if (!isSectionActive("about")) return;
 
     // Smooth mouse movement
     mouseX += (targetMouseX - mouseX) * 0.05;
@@ -192,7 +210,7 @@ function createAboutCanvas() {
   window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   });
 }
 
@@ -206,7 +224,7 @@ function createProjectsCanvas() {
   );
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   document.getElementById("projects-canvas").appendChild(renderer.domElement);
 
   // Create wave mesh
@@ -235,6 +253,7 @@ function createProjectsCanvas() {
 
   function animate() {
     requestAnimationFrame(animate);
+    if (!isSectionActive("projects")) return;
 
     // Smooth mouse movement
     mouseX += (targetMouseX - mouseX) * 0.05;
@@ -294,7 +313,7 @@ function createProjectsCanvas() {
   window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   });
 }
 
@@ -310,7 +329,7 @@ function createCadProjectsCanvas() {
     1000,
   );
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   container.appendChild(renderer.domElement);
 
   const loader = new THREE.GLTFLoader();
@@ -380,6 +399,7 @@ function createCadProjectsCanvas() {
 
   function animate() {
     requestAnimationFrame(animate);
+    if (!isSectionActive("cad-projects")) return;
 
     if (activeBackgroundModel) {
       modelPivot.rotation.y += 0.005;
@@ -394,7 +414,7 @@ function createCadProjectsCanvas() {
   window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   });
 }
 
