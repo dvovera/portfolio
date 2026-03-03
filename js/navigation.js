@@ -126,7 +126,7 @@ function attemptQueuedSectionScroll() {
   clearTimeout(fallbackUnlockTimer);
   fallbackUnlockTimer = setTimeout(() => {
     canScroll = true;
-    attemptQueuedSectionScroll();
+    accumulatedDelta = 0;
   }, FALLBACK_MS);
 }
 
@@ -138,8 +138,9 @@ container.addEventListener("transitionend", (e) => {
       }
     });
 
+    clearTimeout(fallbackUnlockTimer);
     canScroll = true;
-    attemptQueuedSectionScroll();
+    accumulatedDelta = 0;
   }
 });
 
@@ -178,6 +179,11 @@ function onWheel(e) {
   }
 
   e.preventDefault();
+
+  if (!canScroll) {
+    return;
+  }
+
   accumulatedDelta += e.deltaY;
   attemptQueuedSectionScroll();
 }

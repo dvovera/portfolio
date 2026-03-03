@@ -398,7 +398,7 @@ function createCadProjectsCanvas() {
     loadWireframeModel(file);
   });
 
-  loadWireframeModel("model1.glb");
+  loadWireframeModel("arm.glb");
 
   function animate() {
     requestAnimationFrame(animate);
