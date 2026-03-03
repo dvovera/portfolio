@@ -62,7 +62,7 @@
             Education & Experience
           </button>
           <button class="tab-btn" data-tab="skills-awards">
-            Skills & Awards
+            Awards
           </button>
 
           <div class="tab-content">
@@ -149,7 +149,7 @@
                       <div class="timeline-badge">EDU</div>
                       <h3>BSc Mechatronics and Robotics Engineering Co-op</h3>
                       <h4>University of Alberta | Edmonton, Alberta</h4>
-                      <p class="timeline-date">2024-2029 | GPA: 4.0</p>
+                      <p class="timeline-date">2024-2029 | GPA: 3.9</p>
                       <p>
                         Vice President Internal of the Mechatronics Engineering
                         Students' Association
@@ -300,6 +300,7 @@
         /* Fixed height for scrollable area */
         position: relative;
         z-index: 1;
+        box-sizing: border-box;
       }
 
       .tab-pane {
@@ -616,6 +617,24 @@
           gap: 0.4rem;
         }
 
+        h1,
+        .cad-title {
+          font-size: 2.2rem;
+          padding: 6px 14px;
+          margin-bottom: 0.9rem;
+        }
+
+        .cad-title {
+          white-space: nowrap;
+          font-size: 2.2rem;
+          padding-left: 8px;
+          padding-right: 8px;
+        }
+
+        #welcome h1 {
+          border-top-width: 6px;
+        }
+
         .tab-btn {
           font-size: 0.9rem;
           padding: 0.45rem 1rem;
@@ -644,8 +663,13 @@
 
         .section-subtitle {
           font-size: 1.3rem;
-          margin: 1.5rem 0 0.8rem;
+          margin: 1.5rem 0 rem;
         }
+
+        /* .award-card::before {
+          border: 3px solid var(--black);
+
+        } */
       }
 
       @media (max-width: 480px) {
@@ -656,14 +680,51 @@
       }
 
       .scrolling-container {
-        /* width: 100%; */
-        width: 800px;
-        max-width: 800px;
+        width: min(800px, 100%);
+        max-width: 100%;
         margin: 0 auto;
-        padding-right: 10px;
+        padding-right: 0;
         height: 100%;
         overflow-y: auto;
+        overflow-x: hidden;
         display: block;
+        box-sizing: border-box;
+      }
+
+      @media (max-width: 768px) {
+        .scroll-container {
+          width: 100%;
+          max-width: 100%;
+          padding: 0 0.5rem;
+          box-sizing: border-box;
+          overflow-x: hidden;
+        }
+
+        .scrolling-container {
+          width: 100%;
+          max-width: 100%;
+          padding: 0;
+        }
+
+        .tab-content {
+          width: 100%;
+          max-width: 100%;
+          border-top-right-radius: 0;
+        }
+
+        .timeline {
+          margin-left: 0;
+        }
+
+        .timeline-content {
+          min-width: 0;
+        }
+
+        .timeline-content h3,
+        .timeline-content h4,
+        .timeline-content p {
+          overflow-wrap: anywhere;
+        }
       }
     </style>
 
