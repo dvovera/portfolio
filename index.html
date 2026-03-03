@@ -205,10 +205,28 @@
     </section>
 
     <style>
-      /* About Tabs Styling */
-      .about .scrolling-container>.tab-btn:first-of-type {
-        margin-top: 2rem;
+      .section.about {
+        transition: opacity 0.8s ease, transform 0.8s ease;
       }
+
+      .section.about.active {
+        transition-duration: 0s;
+      }
+
+      .section.about h1,
+      .section.about p,
+      .section.about .social-links {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+
+      .section.about .social-link {
+        opacity: 1;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+      }
+
+      /* About Tabs Styling */
 
       .about .scrolling-container>.tab-btn+.tab-btn {
         margin-left: 0.35rem;
@@ -240,7 +258,7 @@
         background-color: white;
         border-bottom: none;
         color: var(--black);
-        transform: translateY(-0.5px);
+        transform: translateY(0px);
         z-index: 2;
       }
 
@@ -260,9 +278,9 @@
         /* width: 800px; */
         max-width: 800px;
         margin-top: -3px;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.6s ease 0.7s;
+        opacity: 1;
+        transform: none;
+        transition: none;
         height: 450px;
         border: 3px solid var(--black);
         border-radius: 0 18px 18px 18px;
@@ -271,11 +289,6 @@
         /* Fixed height for scrollable area */
         position: relative;
         z-index: 1;
-      }
-
-      .section.active .tab-content {
-        opacity: 1;
-        transform: translateY(0);
       }
 
       .tab-pane {
@@ -431,19 +444,22 @@
 
       .timeline-content.education h3 {
         font-size: 1.3rem;
-        margin: 0 0 0.3rem;
+        margin: 0 0 0.18rem;
+        line-height: 1.2;
         color: var(--black);
       }
 
       .timeline-content h3 {
         font-size: 1.3rem;
-        margin: 0 0 0.3rem;
+        margin: 0 0 0.18rem;
+        line-height: 1.2;
         color: var(--black);
       }
 
       .timeline-content h4 {
         font-size: 1.1rem;
-        margin: 0 0 0.3rem;
+        margin: 0 0 0.18rem;
+        line-height: 1.25;
         color: var(--light-black);
         font-weight: 400;
       }
@@ -451,7 +467,8 @@
       .timeline-date {
         font-size: 0.9rem;
         color: var(--lighter-black);
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.4rem;
+        line-height: 1.25;
         font-weight: 500;
       }
 
@@ -459,7 +476,7 @@
         margin: 0;
         text-align: left;
         font-size: 1rem;
-        line-height: 1.6;
+        line-height: 1.2;
         transition: none;
         opacity: 1;
         transform: none;
@@ -697,7 +714,7 @@
           label: "Model 1",
           color: "#314bf5",
           material: null,
-          description: "As part of a team, I helped design Pomo-Robo, a low-cost 3-DoF robotic arm powered by an Arduino with real-time inverse kinematics for precise motion. I contributed to the base attachment, second arm linkage, and modular wrist system, enabling stable structure and quick end-effector swapping for adaptable functionality.",
+          description: "As part of a team, I helped design and 3D print Pomo-Robo, a low-cost 3-DoF robotic arm powered by an Arduino with real-time inverse kinematics for precise motion. I contributed to the base attachment, second arm linkage, and modular wrist system, enabling stable structure and quick end-effector swapping for adaptable functionality.",
           descriptionImage: "arm.gif",
         },
         {
