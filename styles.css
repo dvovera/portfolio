@@ -730,13 +730,13 @@ body {
   pointer-events: none;
   background-image: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.12) 0,
     rgba(255, 255, 255, 0.12) 1px,
-    rgba(0, 0, 0, 0.07) 1px,
+    rgba(255, 68, 68, 0.12) 3px,
+    rgba(104, 152, 255, 0.188) 3px,
     rgba(0, 0, 0, 0.07) 3px
   );
   background-size: 100% 4px;
-  opacity: 0.4;
+  opacity: 0.5;
   mix-blend-mode: soft-light;
 }
 
@@ -748,7 +748,7 @@ body {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  opacity: 0.58;
+  opacity: 0.3;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 56px 56px;
@@ -1038,6 +1038,13 @@ body {
 /* Remove the fixed height on tab-content so it grows naturally */
 .section.about .tab-content {
   height: auto;
+  position: relative;
+  background-image:
+    radial-gradient(rgba(0, 0, 0, 0.035) 0.6px, transparent 0.6px),
+    radial-gradient(rgba(0, 0, 0, 0.02) 0.6px, transparent 0.6px),
+    linear-gradient(180deg, #ffffff 0%, #fbfbfb 50%);
+  background-size: 3px 3px, 5px 5px, 100% 100%;
+  background-position: 0 0, 1px 1px, 0 0;
 }
 
 .scrolling-container {
