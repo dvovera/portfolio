@@ -69,13 +69,13 @@
             <!-- Skills & Awards Tab -->
             <div class="tab-pane" id="skills-awards-tab">
               <div class="scrollable-content">
-                <h2 class="section-subtitle">Skills</h2>
+                <!-- <h2 class="section-subtitle">Skills</h2>
                 <div class="skill-list">
                   <span class="skill" data-hover="true">full-stack development</span>
                   <span class="skill" data-hover="true">python ai agents</span>
                   <span class="skill" data-hover="true">CAD & 3D printing</span>
                   <span class="skill" data-hover="true">project management</span>
-                </div>
+                </div> -->
 
                 <h2 class="section-subtitle">Awards</h2>
                 <div class="awards-grid">
@@ -484,9 +484,10 @@
 
       /* Awards Styling */
       .awards-grid {
+        counter-reset: award-file;
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
+        gap: 1.2rem;
         width: 100%;
         max-width: 800px;
         margin-bottom: 1.5rem;
@@ -494,18 +495,54 @@
       }
 
       .award-card {
+        counter-increment: award-file;
+        position: relative;
         background-color: white;
-        border-radius: 12px;
-        padding: 1.5rem;
+        border: 3px solid var(--black);
+        border-radius: 0 16px 16px 16px;
+        padding: 1.8rem 1rem 1rem;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        text-align: center;
-        border-top: 4px solid var(--black);
+        transition: transform 0.25s ease, box-shadow 0.25s ease,
+          background-color 0.25s ease;
+        text-align: left;
+        overflow: visible;
+      }
+
+      .award-card::before {
+        content: "FILE " counter(award-file, decimal-leading-zero);
+        position: absolute;
+        top: -29px;
+        left: -3px;
+        height: 28px;
+        min-width: 126px;
+        padding: 0 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        font-weight: 600;
+        color: var(--light-black);
+        background: var(--blue-lightest);
+        border: 3px solid var(--black);
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+      }
+
+      .award-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 132px;
+        height: 3px;
+        background: white;
       }
 
       .award-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+        background-color: var(--blue-lightest);
       }
 
       .award-icon {
@@ -514,11 +551,12 @@
       }
 
       .award-card h3 {
-        font-size: 1.2rem;
-        margin: 0 0 0.5rem;
+        font-size: 1.05rem;
+        margin: 0 0 0.45rem;
         color: var(--black);
         position: relative;
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.45rem;
+        line-height: 1.3;
       }
 
       .award-card h3::after {
@@ -527,15 +565,16 @@
         left: 0;
         bottom: 0;
         width: 100%;
-        height: 1px;
+        height: 2px;
         background-color: var(--blue-light);
       }
 
       .award-card p {
-        margin: 0.2rem 0;
-        font-size: 0.95rem;
+        margin: 0;
+        font-size: 0.92rem;
         color: var(--text-light);
-        text-align: center;
+        text-align: left;
+        line-height: 1.4;
         transition: none;
         opacity: 1;
         transform: none;
