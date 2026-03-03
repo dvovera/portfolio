@@ -680,7 +680,8 @@
       }
 
       .scrolling-container {
-        width: min(800px, 100%);
+        /* width: min(800px, 100%); */
+        width: 800px;
         max-width: 100%;
         margin: 0 auto;
         padding-right: 0;
@@ -909,10 +910,14 @@
         return Math.min(diff, length - diff);
       }
 
-      const CARD_W = 200;
-      const CARD_H = 240;
+      const isMobileCarousel = window.matchMedia("(max-width: 768px)").matches;
+      const CARD_W = isMobileCarousel ? 200 : 280;
+      const CARD_H = isMobileCarousel ? 240 : 320;
       const total = MODELS.length;
-      const RADIUS = Math.max(240, total * 46);
+      const RADIUS = isMobileCarousel
+        ? Math.max(240, total * 46)
+        : Math.max(300, total * 62);
+
 
       let activeIndex = 0;
       let targetAngle = 0;
