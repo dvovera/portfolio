@@ -7,7 +7,7 @@ function createWelcomeCanvas() {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1000,
   );
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -70,15 +70,15 @@ function createWelcomeCanvas() {
   }
   particleGeometry.setAttribute(
     "position",
-    new THREE.BufferAttribute(particlePositions, 3)
+    new THREE.BufferAttribute(particlePositions, 3),
   );
   particleGeometry.setAttribute(
     "size",
-    new THREE.BufferAttribute(particleSizes, 1)
+    new THREE.BufferAttribute(particleSizes, 1),
   );
   particleGeometry.setAttribute(
     "color",
-    new THREE.BufferAttribute(particleColors, 3)
+    new THREE.BufferAttribute(particleColors, 3),
   );
   const particleMaterial = new THREE.PointsMaterial({
     size: 0.15,
@@ -143,7 +143,7 @@ function createAboutCanvas() {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1000,
   );
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 
@@ -202,7 +202,7 @@ function createProjectsCanvas() {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1000,
   );
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 
@@ -244,7 +244,7 @@ function createProjectsCanvas() {
     const mouseDeltaX = mouseX - lastMouseX;
     const mouseDeltaY = mouseY - lastMouseY;
     const mouseVelocity = Math.sqrt(
-      mouseDeltaX * mouseDeltaX + mouseDeltaY * mouseDeltaY
+      mouseDeltaX * mouseDeltaX + mouseDeltaY * mouseDeltaY,
     );
 
     // Update interaction strength based on mouse velocity
@@ -285,6 +285,106 @@ function createProjectsCanvas() {
     // Rotate wave slightly based on mouse
     wave.rotation.x = -Math.PI / 4 + mouseY * 0.2;
     wave.rotation.z = mouseX * 0.2;
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  window.addEventListener("resize", () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
+
+function createCadProjectsCanvas() {
+  const container = document.getElementById("cad-projects-canvas");
+  if (!container) return;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    70,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000,
+  );
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+
+  const loader = new THREE.GLTFLoader();
+  const modelPivot = new THREE.Group();
+  scene.add(modelPivot);
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+  const keyLight = new THREE.DirectionalLight(0xffffff, 0.65);
+  keyLight.position.set(4, 5, 4);
+  scene.add(ambientLight);
+  scene.add(keyLight);
+
+  camera.position.z = 12;
+  camera.position.y = 0.5;
+
+  let activeBackgroundModel = null;
+  let activeFile = null;
+
+  function loadWireframeModel(file) {
+    if (!file || file === activeFile) return;
+
+    loader.load(
+      file,
+      (gltf) => {
+        const model = gltf.scene;
+
+        model.traverse((child) => {
+          if (!child.isMesh) return;
+          child.material = new THREE.MeshBasicMaterial({
+            color: 0x66a3ff,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.3,
+          });
+        });
+
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z) || 1;
+        const scale = 17 / maxDim;
+
+        model.scale.setScalar(scale);
+        model.position.sub(center.multiplyScalar(scale));
+
+        if (activeBackgroundModel) {
+          modelPivot.remove(activeBackgroundModel);
+        }
+
+        activeBackgroundModel = model;
+        activeFile = file;
+        modelPivot.add(activeBackgroundModel);
+      },
+      undefined,
+      () => {
+        activeFile = null;
+      },
+    );
+  }
+
+  window.addEventListener("cadModelChange", (event) => {
+    const file = event.detail?.file;
+    loadWireframeModel(file);
+  });
+
+  loadWireframeModel("model1.glb");
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    if (activeBackgroundModel) {
+      modelPivot.rotation.y += 0.005;
+      modelPivot.rotation.x = Math.sin(Date.now() * 0.0007) * 0.15;
+    }
 
     renderer.render(scene, camera);
   }

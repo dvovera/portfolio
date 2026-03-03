@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   createWelcomeCanvas();
   createAboutCanvas();
   createProjectsCanvas();
+  createCadProjectsCanvas();
   scrollToSection(0);
 
   generateProjectCards();

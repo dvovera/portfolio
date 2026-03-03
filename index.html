@@ -613,6 +613,7 @@
     </section>
 
     <section class="section cad-projects" id="cad-projects">
+      <div class="canvas-container" id="cad-projects-canvas"></div>
       <div class="cad-shell">
         <h1 class="cad-title">cad projects</h1>
 
@@ -680,7 +681,16 @@
 
       const MODELS = [
         {
+          file: "arm.glb",
+          label: "Arm",
+          color: "#314bf5",
+          material: null,
+          description: "Add your description here",
+          descriptionImage: null,
+        },
+        {
           file: "model1.glb",
+          label: "Model 1",
           color: "#ff4444",
           material: null,
           description: "A simple wheel model",
@@ -688,6 +698,7 @@
         },
         {
           file: "model2.glb",
+          label: "Model 2",
           color: "#adcdff",
           material: null,
           description: "Add your description here",
@@ -695,20 +706,15 @@
         },
         {
           file: "model3.glb",
+          label: "Model 3",
           color: "#fcb103",
           material: null,
           description: "Add your description here",
           descriptionImage: null,
         },
         {
-          file: "model4.glb",
-          color: "#314bf5",
-          material: null,
-          description: "Add your description here",
-          descriptionImage: null,
-        },
-        {
           file: "model5.glb",
+          label: "Model 5",
           color: "#8cff85",
           material: null,
           description: "Add your description here",
@@ -746,13 +752,54 @@
 
       const loader = new THREE.GLTFLoader();
       const cardEls = [];
+      const cardCanvases = [];
       const cardModels = [];
       const renderers = [];
       const scenes = [];
       const cameras = [];
 
+      let draggingModelIndex = null;
+      let modelDragLastX = 0;
+      let modelDragLastY = 0;
+
+      function startModelDrag(index, x, y) {
+        draggingModelIndex = index;
+        modelDragLastX = x;
+        modelDragLastY = y;
+        if (cardCanvases[index]) {
+          cardCanvases[index].style.cursor = "grabbing";
+        }
+      }
+
+      function moveModelDrag(x, y) {
+        if (draggingModelIndex === null) return;
+
+        const model = cardModels[draggingModelIndex];
+        const dx = x - modelDragLastX;
+        const dy = y - modelDragLastY;
+
+        modelDragLastX = x;
+        modelDragLastY = y;
+
+        if (!model) return;
+
+        model.rotation.y += dx * 0.01;
+        model.rotation.x += dy * 0.01;
+        model.rotation.x = Math.max(-1.2, Math.min(1.2, model.rotation.x));
+      }
+
+      function endModelDrag() {
+        if (draggingModelIndex === null) return;
+
+        if (cardCanvases[draggingModelIndex]) {
+          cardCanvases[draggingModelIndex].style.cursor = "grab";
+        }
+
+        draggingModelIndex = null;
+      }
+
       MODELS.forEach((entry, i) => {
-        const { file, color, material } = entry;
+        const { file, label: cardLabel, color, material } = entry;
         const angle = (i / total) * Math.PI * 2;
         const x = Math.sin(angle) * RADIUS;
         const z = Math.cos(angle) * RADIUS;
@@ -771,6 +818,7 @@
         canvas.height = CARD_H * 2;
         canvas.style.width = `${CARD_W}px`;
         canvas.style.height = `${CARD_H}px`;
+        canvas.style.cursor = "grab";
 
         const loadDiv = document.createElement("div");
         loadDiv.className = "cad-card-loading";
@@ -778,7 +826,7 @@
 
         const label = document.createElement("div");
         label.className = "cad-card-label";
-        label.textContent = makeLabel(file);
+        label.textContent = cardLabel || makeLabel(file);
 
         inner.appendChild(loadDiv);
         inner.appendChild(canvas);
@@ -786,6 +834,22 @@
         card.appendChild(inner);
         track.appendChild(card);
         cardEls.push(card);
+        cardCanvases.push(canvas);
+
+        canvas.addEventListener("mousedown", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          startModelDrag(i, event.clientX, event.clientY);
+        });
+
+        canvas.addEventListener(
+          "touchstart",
+          (event) => {
+            event.stopPropagation();
+            startModelDrag(i, event.touches[0].clientX, event.touches[0].clientY);
+          },
+          { passive: true },
+        );
 
         const dot = document.createElement("button");
         dot.type = "button";
@@ -900,6 +964,11 @@
 
         const model = MODELS[activeIndex];
         descText.textContent = model.description || "";
+        window.dispatchEvent(
+          new CustomEvent("cadModelChange", {
+            detail: { file: model.file },
+          }),
+        );
         if (model.descriptionImage) {
           descImg.src = model.descriptionImage;
           descImg.style.display = "block";
@@ -924,7 +993,7 @@
 
         cardModels.forEach((model, i) => {
           if (!model) return;
-          if (i === activeIndex) {
+          if (i === activeIndex && draggingModelIndex === null) {
             model.rotation.y += 0.008;
           }
         });
@@ -938,11 +1007,13 @@
       let dragLastX = 0;
 
       function dragStart(x) {
+        if (draggingModelIndex !== null) return;
         dragging = true;
         dragLastX = x;
       }
 
       function dragMove(x) {
+        if (draggingModelIndex !== null) return;
         if (!dragging) return;
         const dx = x - dragLastX;
         dragLastX = x;
@@ -957,16 +1028,21 @@
       }
 
       function dragEnd() {
+        if (draggingModelIndex !== null) return;
         if (!dragging) return;
         dragging = false;
         goTo(activeIndex);
       }
 
       carousel.addEventListener("mousedown", (event) => dragStart(event.clientX));
+      window.addEventListener("mousemove", (event) => moveModelDrag(event.clientX, event.clientY));
       window.addEventListener("mousemove", (event) => dragMove(event.clientX));
+      window.addEventListener("mouseup", endModelDrag);
       window.addEventListener("mouseup", dragEnd);
       carousel.addEventListener("touchstart", (event) => dragStart(event.touches[0].clientX), { passive: true });
+      window.addEventListener("touchmove", (event) => moveModelDrag(event.touches[0].clientX, event.touches[0].clientY), { passive: true });
       window.addEventListener("touchmove", (event) => dragMove(event.touches[0].clientX), { passive: true });
+      window.addEventListener("touchend", endModelDrag);
       window.addEventListener("touchend", dragEnd);
 
       cadStage.addEventListener(

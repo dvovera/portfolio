@@ -90,7 +90,7 @@ p {
   z-index: 10;
   opacity: 1;
   margin: 0;
-  font-size: 2.5rem;
+  font-size: 3.5rem;
 }
 
 .cad-main {
@@ -181,6 +181,9 @@ p {
   width: 380px;
   background: white;
   border-left: 1px solid var(--blue-light);
+  margin-right: 2.5rem;
+  height: 60vh;
+  align-self: center;
   padding: 6rem 1.2rem 1.2rem;
   overflow-y: auto;
 }
@@ -209,7 +212,7 @@ p {
   color: var(--text-dark);
   width: 40px;
   height: 40px;
-  border-radius: 20px;
+  border-radius: 0;
   cursor: pointer;
 }
 
@@ -308,6 +311,10 @@ p {
 .section.active .social-link {
   transform: translateY(0);
   opacity: 1;
+}
+
+.section.active .cad-title {
+  transform: translateX(-50%);
 }
 
 .nav {
