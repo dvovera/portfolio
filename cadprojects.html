@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model Carousel</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Syne+Mono&display=swap');
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #080810;
+      --border: #ffffff10;
+      --accent: #c8f060;
+      --accent2: #60c8f0;
+      --text: #f0f0f8;
+      --muted: #50506a;
+      --card-bg: #10101c;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      cursor: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #main-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Custom cursor */
+    /* Removed - using default cursor */
+
+    /* Noise */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Radial glow */
+    #glow {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(200, 240, 96, 0.05) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 50%;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8, 8, 16, 0.85);
+      backdrop-filter: blur(16px);
+    }
+
+    .logo {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    #hdr-label {
+      font-family: 'Syne Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text);
+      text-transform: uppercase;
+      transition: opacity 0.3s;
+    }
+
+    .model-counter {
+      font-family: 'Syne Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .model-counter span {
+      color: var(--text);
+    }
+
+    /* Stage */
+    #stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #carousel {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      perspective: 1200px;
+      perspective-origin: 50% 46%;
+    }
+
+    #track {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform-style: preserve-3d;
+    }
+
+    .card {
+      position: absolute;
+      width: 300px;
+      height: 340px;
+      transform-style: preserve-3d;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1px;
+      overflow: hidden;
+      position: relative;
+      transition: border-color 0.4s, box-shadow 0.4s;
+    }
+
+    .card.active .card-inner {
+      border-color: rgba(200, 240, 96, 0.35);
+      box-shadow: 0 0 60px rgba(200, 240, 96, 0.07), 0 0 120px rgba(200, 240, 96, 0.03);
+    }
+
+    .card canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .card-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 14px;
+      background: linear-gradient(transparent, rgba(8, 8, 16, 0.96));
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.3s;
+      pointer-events: none;
+    }
+
+    .card.active .card-label {
+      color: var(--accent);
+    }
+
+    .card-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 10px;
+      font-family: 'Syne Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+    }
+
+    .card-loading .spin {
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Arrows */
+    .arr {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 16px;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .arr:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    #al {
+      left: 350px;
+    }
+
+    #ar {
+      right: calc(420px + 350px);
+    }
+
+    /* Dots */
+    #dots {
+      position: fixed;
+      bottom: 56px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 7px;
+      z-index: 100;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--muted);
+      cursor: none;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .dot.active {
+      background: var(--accent);
+      transform: scale(1.6);
+    }
+
+    /* Hint */
+    #drag-hint {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Syne Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      z-index: 100;
+      animation: pulse 2.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.3
+      }
+
+      50% {
+        opacity: 0.8
+      }
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      z-index: 100;
+      border-top: 1px solid var(--border);
+      background: rgba(8, 8, 16, 0.85);
+      backdrop-filter: blur(16px);
+      font-family: 'Syne Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .fi {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .fd {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+
+    /* Description Panel */
+    #desc-panel {
+      position: relative;
+      width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 50;
+      overflow-y: auto;
+      padding: 120px 28px;
+      border-left: 1px solid var(--border);
+    }
+
+    #desc-image {
+      width: 100%;
+      height: 240px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1px;
+      object-fit: cover;
+      overflow: hidden;
+      opacity: 1;
+    }
+
+    #desc-text {
+      flex: 1;
+      font-family: 'Syne Mono', monospace;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--text);
+      word-wrap: break-word;
+      overflow-y: auto;
+      padding-right: 8px;
+      opacity: 1;
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    #desc-text.fade-out,
+    #desc-image.fade-out {
+      animation: fadeOut 0.25s ease forwards;
+    }
+
+    #desc-text.fade-in,
+    #desc-image.fade-in {
+      animation: fadeIn 0.25s ease forwards;
+    }
+
+    #desc-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #desc-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #desc-panel::-webkit-scrollbar-thumb {
+      background: var(--muted);
+      border-radius: 3px;
+    }
+
+    #desc-panel::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="glow"></div>
+
+  <header>
+    <div class="logo">Gallery</div>
+    <div id="hdr-label">—</div>
+    <div class="model-counter"><span id="hdr-cur">1</span> / <span id="hdr-tot">0</span></div>
+  </header>
+
+  <!-- ╔══════════════════════════════════════════════════════════════════╗
+     ║  ✏️  ADD YOUR MODELS HERE                                       ║
+     ║  file:     filename of the .glb in the same folder              ║
+     ║  color:    CSS hex color, or null to keep original               ║
+     ║  material: "flat" | "phong" | "toon" | "wire" | null (original) ║
+     ╚══════════════════════════════════════════════════════════════════╝ -->
+  <script>
+    const MODELS = [
+      { file: "model1.glb", color: "#ff4444", material: null, description: "A simple wheel model", descriptionImage: "image.png" },
+      { file: "model2.glb", color: "#adcdff", material: null, description: "Add your description here", descriptionImage: null },
+      { file: "model3.glb", color: "#fcb103", material: null, description: "Add your description here", descriptionImage: null },
+      { file: "model4.glb", color: "#314bf5", material: null, description: "Add your description here", descriptionImage: null },
+      { file: "model5.glb", color: "#8cff85", material: null, description: "Add your description here", descriptionImage: null },
+      // ← add more entries here
+    ];
+  </script>
+
+  <div id="main-content">
+    <div id="stage">
+      <div id="carousel">
+        <div id="track"></div>
+      </div>
+    </div>
+
+    <div id="desc-panel">
+      <img id="desc-image" alt="Model description" />
+      <div id="desc-text"></div>
+    </div>
+  </div>
+
+  <button class="arr" id="al">&#8592;</button>
+  <button class="arr" id="ar">&#8594;</button>
+
+  <div id="drag-hint">← drag to spin →</div>
+  <div id="dots"></div>
+
+  <footer>
+    <div class="fi">
+      <div class="fd"></div>drag to spin
+    </div>
+    <div class="fi">
+      <div class="fd" style="background:var(--accent2)"></div>scroll inside card
+    </div>
+    <div class="fi">
+      <div class="fd"></div>arrow keys
+    </div>
+  </footer>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    (function () {
+      // ── Helpers ───────────────────────────────────────────────────────────────
+      function lerp(a, b, t) { return a + (b - a) * t; }
+      function makeLabel(name) { return name.replace(/\.glb$/i, '').replace(/[_\-]/g, ' '); }
+
+      const CARD_W = 300;
+      const CARD_H = 340;
+      const total = MODELS.length;
+      const RADIUS = Math.max(300, total * 52);
+
+      // ── State ─────────────────────────────────────────────────────────────────
+      let targetAngle = 0;
+      let currentAngle = 0;
+      let activeIndex = 0;
+
+      // ── DOM ───────────────────────────────────────────────────────────────────
+      const track = document.getElementById('track');
+      const dotsEl = document.getElementById('dots');
+      const hdrCur = document.getElementById('hdr-cur');
+      const hdrTot = document.getElementById('hdr-tot');
+      const hdrLabel = document.getElementById('hdr-label');
+      hdrTot.textContent = total;
+
+      // ── Per-card Three.js ─────────────────────────────────────────────────────
+      const loader = new THREE.GLTFLoader();
+      const cardEls = [];
+      const renderers = [];
+      const scenes = [];
+      const cameras = [];
+      const orbits = [];
+
+      MODELS.forEach((entry, i) => {
+        const { file, color, material } = entry;
+        const angle = (i / total) * Math.PI * 2;
+        const x = Math.sin(angle) * RADIUS;
+        const z = Math.cos(angle) * RADIUS;
+
+        // Card DOM
+        const card = document.createElement('div');
+        card.className = 'card' + (i === 0 ? ' active' : '');
+        card.dataset.index = i;
+        const deg = angle * 180 / Math.PI;
+        card.style.transform = `translate3d(${x - CARD_W / 2}px, ${-CARD_H / 2}px, ${z}px) rotateY(${deg}deg)`;
+
+        const inner = document.createElement('div');
+        inner.className = 'card-inner';
+
+        const canvas = document.createElement('canvas');
+        canvas.width = CARD_W * 2; canvas.height = CARD_H * 2;
+        canvas.style.width = CARD_W + 'px'; canvas.style.height = CARD_H + 'px';
+
+        const loadDiv = document.createElement('div');
+        loadDiv.className = 'card-loading';
+        loadDiv.innerHTML = '<div class="spin"></div>LOADING';
+
+        const label = document.createElement('div');
+        label.className = 'card-label';
+        label.textContent = makeLabel(file);
+
+        inner.appendChild(loadDiv);
+        inner.appendChild(canvas);
+        inner.appendChild(label);
+        card.appendChild(inner);
+        track.appendChild(card);
+        cardEls.push(card);
+
+        // Dot
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.addEventListener('click', () => goTo(i));
+        dotsEl.appendChild(dot);
+
+        // Three.js scene
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(1);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        renderer.setClearColor(0x000000, 0);
+        renderer.setSize(CARD_W * 2, CARD_H * 2, false);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, CARD_W / CARD_H, 0.01, 500);
+        camera.position.set(0, 1, 3.5);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+        const key = new THREE.DirectionalLight(0xffffff, 1.3);
+        key.position.set(3, 5, 4); scene.add(key);
+        const rim = new THREE.DirectionalLight(0x60c8f0, 0.45);
+        rim.position.set(-3, 2, -3); scene.add(rim);
+        const bot = new THREE.DirectionalLight(0xc8f060, 0.18);
+        bot.position.set(0, -3, 0); scene.add(bot);
+
+        const orbit = new THREE.OrbitControls(camera, canvas);
+        orbit.enableDamping = true;
+        orbit.dampingFactor = 0.07;
+        orbit.enablePan = false;
+        orbit.autoRotate = (i === 0);
+        orbit.autoRotateSpeed = 0.8;
+
+        loader.load(file, gltf => {
+          loadDiv.remove();
+          const model = gltf.scene;
+          const box = new THREE.Box3().setFromObject(model);
+          const size = box.getSize(new THREE.Vector3());
+          const center = box.getCenter(new THREE.Vector3());
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale = 1.8 / maxDim;
+          model.scale.setScalar(scale);
+          model.position.sub(center.multiplyScalar(scale));
+          const box2 = new THREE.Box3().setFromObject(model);
+          model.position.y -= box2.min.y;
+          model.position.y -= (box2.max.y - box2.min.y) * 0.35;
+
+          // Apply material / color overrides
+          if (material || color) {
+            const col = new THREE.Color(color || 0xcccccc);
+            model.traverse(child => {
+              if (!child.isMesh) return;
+              if (material === 'flat') {
+                child.material = new THREE.MeshStandardMaterial({ color: col, roughness: 0.85, metalness: 0.0 });
+              } else if (material === 'phong') {
+                child.material = new THREE.MeshPhongMaterial({ color: col, shininess: 100, specular: new THREE.Color(0x888888) });
+              } else if (material === 'toon') {
+                child.material = new THREE.MeshToonMaterial({ color: col });
+              } else if (material === 'wire') {
+                child.material = new THREE.MeshBasicMaterial({ color: col, wireframe: true });
+              } else {
+                // color only - clone and recolor, strip texture map so color shows
+                const mats = Array.isArray(child.material) ? child.material : [child.material];
+                child.material = mats.length === 1
+                  ? (() => { const c = mats[0].clone(); c.color.set(col); c.map = null; return c; })()
+                  : mats.map(m => { const c = m.clone(); c.color.set(col); c.map = null; return c; });
+              }
+            });
+          }
+
+          scene.add(model);
+          orbit.target.set(0, (box2.max.y - box2.min.y) * 0.15, 0);
+        }, undefined, () => {
+          loadDiv.innerHTML = '<span style="color:#f06080;font-size:9px;letter-spacing:.1em">NOT FOUND</span>';
+        });
+
+        renderers.push(renderer);
+        scenes.push(scene);
+        cameras.push(camera);
+        orbits.push(orbit);
+      });
+
+      updateActive();
+
+      // ── Animate ───────────────────────────────────────────────────────────────
+      function animate() {
+        requestAnimationFrame(animate);
+        currentAngle = lerp(currentAngle, targetAngle, 0.1);
+        track.style.transform = `rotateY(${currentAngle * 180 / Math.PI}deg)`;
+        renderers.forEach((r, i) => {
+          orbits[i].update();
+          r.render(scenes[i], cameras[i]);
+        });
+      }
+      animate();
+
+      // ── Go-to ─────────────────────────────────────────────────────────────────
+      function goTo(index) {
+        activeIndex = ((index % total) + total) % total;
+        const cardAngle = (activeIndex / total) * Math.PI * 2;
+        let diff = -cardAngle - targetAngle;
+        diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+        targetAngle += diff;
+        updateActive();
+      }
+
+      function updateActive() {
+        cardEls.forEach((c, i) => c.classList.toggle('active', i === activeIndex));
+        dotsEl.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === activeIndex));
+        orbits.forEach((o, i) => { o.autoRotate = (i === activeIndex); });
+        hdrCur.textContent = activeIndex + 1;
+        hdrLabel.textContent = makeLabel(MODELS[activeIndex].file);
+
+        // Update description panel with fade transition
+        const model = MODELS[activeIndex];
+        const descImg = document.getElementById('desc-image');
+        const descText = document.getElementById('desc-text');
+
+        // Fade out current content
+        descImg.classList.remove('fade-in');
+        descText.classList.remove('fade-in');
+        descImg.classList.add('fade-out');
+        descText.classList.add('fade-out');
+
+        // Update content after fade-out completes
+        setTimeout(() => {
+          if (model.descriptionImage) {
+            descImg.src = model.descriptionImage;
+            descImg.style.display = 'block';
+          } else {
+            descImg.style.display = 'none';
+          }
+          descText.textContent = model.description || '';
+
+          // Fade in new content
+          descImg.classList.remove('fade-out');
+          descText.classList.remove('fade-out');
+          descImg.classList.add('fade-in');
+          descText.classList.add('fade-in');
+        }, 250);
+      }
+
+      document.getElementById('al').addEventListener('click', () => goTo(activeIndex - 1));
+      document.getElementById('ar').addEventListener('click', () => goTo(activeIndex + 1));
+      window.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft') goTo(activeIndex - 1);
+        if (e.key === 'ArrowRight') goTo(activeIndex + 1);
+      });
+
+      // ── Drag to spin ──────────────────────────────────────────────────────────
+      let dragging = false, dragLastX = 0;
+
+      function dragStart(x) {
+        dragging = true; dragLastX = x;
+        orbits.forEach(o => o.enabled = false);
+      }
+      function dragMove(x, y) {
+        if (!dragging) return;
+        const dx = x - dragLastX; dragLastX = x;
+        targetAngle += dx * 0.007;
+        // update nearest index
+        const frac = (-targetAngle / (Math.PI * 2)) * total;
+        const ni = (((Math.round(frac) % total) + total) % total);
+        if (ni !== activeIndex) { activeIndex = ni; updateActive(); }
+      }
+      function dragEnd() {
+        if (!dragging) return;
+        dragging = false;
+        orbits.forEach(o => o.enabled = true);
+        goTo(activeIndex); // snap
+      }
+
+      const stage = document.getElementById('carousel');
+      stage.addEventListener('mousedown', e => dragStart(e.clientX));
+      window.addEventListener('mousemove', e => dragMove(e.clientX, e.clientY));
+      window.addEventListener('mouseup', dragEnd);
+      stage.addEventListener('touchstart', e => dragStart(e.touches[0].clientX), { passive: true });
+      window.addEventListener('touchmove', e => dragMove(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+      window.addEventListener('touchend', dragEnd);
+
+      // ── Scroll to spin ────────────────────────────────────────────────────────
+      window.addEventListener('wheel', e => {
+        // Only rotate carousel if not scrolling inside description panel or on a canvas
+        const descPanel = document.getElementById('desc-panel');
+        if (descPanel.contains(e.target)) {
+          return;
+        }
+        // Check if scrolling over a canvas element (the 3D models)
+        if (e.target.tagName === 'CANVAS') {
+          return;
+        }
+        e.preventDefault();
+        targetAngle += e.deltaY * -0.003;
+        // update nearest index
+        const frac = (-targetAngle / (Math.PI * 2)) * total;
+        const ni = (((Math.round(frac) % total) + total) % total);
+        if (ni !== activeIndex) { activeIndex = ni; updateActive(); }
+      }, { passive: false });
+
+    })();
+  </script>
+</body>
+
+</html>
