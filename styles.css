@@ -260,7 +260,7 @@ p {
   transform: translateY(-50%);
   z-index: 11;
   background: white;
-  border: 1px solid var(--black);
+  border: 2px solid var(--black);
   color: var(--text-dark);
   width: 40px;
   height: 40px;
@@ -277,7 +277,7 @@ p {
 }
 
 #cad-ar {
-  right: 540px;
+  right: 600px;
 }
 
 .cad-dots {

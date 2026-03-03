@@ -324,6 +324,31 @@ function createCadProjectsCanvas() {
   const container = document.getElementById("cad-projects-canvas");
   if (!container) return;
 
+  const CAD_BACKGROUND_MAX_PIXEL_RATIO = 1;
+  const CAD_BACKGROUND_TARGET_FPS = 120;
+  const CAD_BACKGROUND_FRAME_TIME = 1000 / CAD_BACKGROUND_TARGET_FPS;
+
+  function applyCadRendererSize(renderer, width, height) {
+    renderer.setPixelRatio(
+      Math.min(window.devicePixelRatio || 1, CAD_BACKGROUND_MAX_PIXEL_RATIO),
+    );
+    renderer.setSize(width, height);
+  }
+
+  function disposeObject3D(root) {
+    root.traverse((child) => {
+      if (!child.isMesh) return;
+
+      child.geometry?.dispose?.();
+
+      if (Array.isArray(child.material)) {
+        child.material.forEach((material) => material?.dispose?.());
+      } else {
+        child.material?.dispose?.();
+      }
+    });
+  }
+
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     70,
@@ -331,12 +356,17 @@ function createCadProjectsCanvas() {
     0.1,
     1000,
   );
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  applyRendererSize(renderer, window.innerWidth, window.innerHeight);
+  const renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: false,
+    powerPreference: "high-performance",
+  });
+  applyCadRendererSize(renderer, window.innerWidth, window.innerHeight);
   container.appendChild(renderer.domElement);
 
   const loader = new THREE.GLTFLoader();
   const modelPivot = new THREE.Group();
+  const modelCache = new Map();
   scene.add(modelPivot);
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
@@ -350,41 +380,58 @@ function createCadProjectsCanvas() {
 
   let activeBackgroundModel = null;
   let activeFile = null;
+  let lastFrameTime = 0;
+
+  function createWireframeVersion(sourceModel) {
+    const model = sourceModel.clone(true);
+
+    model.traverse((child) => {
+      if (!child.isMesh) return;
+      child.material = new THREE.MeshBasicMaterial({
+        color: 0x66a3ff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.28,
+      });
+    });
+
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    const scale = 17 / maxDim;
+
+    model.scale.setScalar(scale);
+    model.position.sub(center.multiplyScalar(scale));
+
+    return model;
+  }
+
+  function setActiveBackgroundModel(model, file) {
+    if (activeBackgroundModel) {
+      modelPivot.remove(activeBackgroundModel);
+      disposeObject3D(activeBackgroundModel);
+    }
+
+    activeBackgroundModel = model;
+    activeFile = file;
+    modelPivot.add(activeBackgroundModel);
+  }
 
   function loadWireframeModel(file) {
     if (!file || file === activeFile) return;
 
+    const cachedModel = modelCache.get(file);
+    if (cachedModel) {
+      setActiveBackgroundModel(createWireframeVersion(cachedModel), file);
+      return;
+    }
+
     loader.load(
       file,
       (gltf) => {
-        const model = gltf.scene;
-
-        model.traverse((child) => {
-          if (!child.isMesh) return;
-          child.material = new THREE.MeshBasicMaterial({
-            color: 0x66a3ff,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.3,
-          });
-        });
-
-        const box = new THREE.Box3().setFromObject(model);
-        const size = box.getSize(new THREE.Vector3());
-        const center = box.getCenter(new THREE.Vector3());
-        const maxDim = Math.max(size.x, size.y, size.z) || 1;
-        const scale = 17 / maxDim;
-
-        model.scale.setScalar(scale);
-        model.position.sub(center.multiplyScalar(scale));
-
-        if (activeBackgroundModel) {
-          modelPivot.remove(activeBackgroundModel);
-        }
-
-        activeBackgroundModel = model;
-        activeFile = file;
-        modelPivot.add(activeBackgroundModel);
+        modelCache.set(file, gltf.scene);
+        setActiveBackgroundModel(createWireframeVersion(gltf.scene), file);
       },
       undefined,
       () => {
@@ -404,6 +451,10 @@ function createCadProjectsCanvas() {
     requestAnimationFrame(animate);
     if (!isSectionActive("cad-projects")) return;
 
+    const now = performance.now();
+    if (now - lastFrameTime < CAD_BACKGROUND_FRAME_TIME) return;
+    lastFrameTime = now;
+
     if (activeBackgroundModel) {
       modelPivot.rotation.y += 0.005;
       modelPivot.rotation.x = Math.sin(Date.now() * 0.0007) * 0.15;
@@ -417,7 +468,7 @@ function createCadProjectsCanvas() {
   window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    applyRendererSize(renderer, window.innerWidth, window.innerHeight);
+    applyCadRendererSize(renderer, window.innerWidth, window.innerHeight);
   });
 }
 

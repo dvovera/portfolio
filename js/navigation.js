@@ -11,7 +11,7 @@ document.addEventListener("mousemove", (event) => {
 
 // Section navigation and animations
 let currentSection = 0;
-const sections = ["welcome", "about", "projects", "cad-projects"];
+const sections = ["welcome", "about", "cad-projects", "projects"];
 const container = document.querySelector(".container");
 const progressBar = document.querySelector(".progress-bar");
 
