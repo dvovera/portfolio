@@ -394,18 +394,18 @@ p {
 
 .project-card {
   background-color: white;
-  border-radius: 15px;
-  padding: 1.3rem;
+  border-radius: 0 22px 22px 22px;
+  padding: 2.2rem 1.3rem 1.3rem;
   /* margin-bottom: 1.5rem; */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: none;
   width: 100%;
   /* Remove or modify this to let the card size to its content */
   /* min-height: 200px; */
   max-width: 400px;
   /* transform: translateY(30px) scale(0.95); */
-  opacity: 0.9;
+  opacity: 1;
   transition: all 0.5s ease;
-  border-left: 5px solid var(--black);
+  border: 3px solid var(--black);
   cursor: pointer;
   position: relative;
   /* Change overflow so extra content isn’t cut off */
@@ -413,6 +413,29 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+}
+
+.project-card::before {
+  content: "";
+  position: absolute;
+  top: -29px;
+  left: -2.8px;
+  width: 150px;
+  height: 28px;
+  background: white;
+  border: 3px solid var(--black);
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+}
+
+.project-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 153px;
+  height: 4px;
+  background: white;
 }
 
 .section.active .project-card:hover {
@@ -429,7 +452,7 @@ p {
     } */
 
 .project-card:hover {
-  transform: translateY(-10px) scale(1);
+  transform: translateY(-6px) scale(1);
   /* box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12); */
 }
 
@@ -446,6 +469,18 @@ p {
   transition: none;
   transform: none;
   opacity: 1;
+}
+
+.project-card .tech-tag {
+  background-color: white;
+  border: 1px solid var(--black);
+  box-shadow: none;
+}
+
+.project-card .tech-tag:hover {
+  background-color: var(--blue-lightest);
+  transform: none;
+  box-shadow: none;
 }
 
 .tech-list {
