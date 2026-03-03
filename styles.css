@@ -260,20 +260,32 @@ p {
   transform: translateY(-50%);
   z-index: 11;
   background: white;
-  border: 2px solid var(--black);
-  color: var(--text-dark);
-  width: 40px;
-  height: 40px;
-  border-radius: 0;
+  border: 1px solid var(--black);
+  color: var(--black);
+  width: 52px;
+  height: 52px;
+  border-radius: 0 16px 16px 0px;
   cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .cad-arr:hover {
-  background: var(--blue-light);
+  background: var(--blue-lightest);
+  transform: translateY(-50%) translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.cad-arr:active {
+  transform: translateY(-50%) translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 #cad-al {
   left: 160px;
+  border-radius: 16px 0px 0px 16px;
 }
 
 #cad-ar {
@@ -323,6 +335,8 @@ p {
   #cad-ar {
     right: 120px;
   }
+
+  
 }
 
 h1 {
@@ -993,12 +1007,24 @@ body {
 
   .cad-arr {
     top: auto;
-    bottom: 6.8rem;
+    bottom: 8rem;
     transform: none;
+    border: 2px solid var(--black);
+    width: 46px;
+    height: 46px;
+    font-size: 1.2rem;
+  }
+
+  .cad-arr:hover {
+    transform: translateY(-4px);
+  }
+
+  .cad-arr:active {
+    transform: translateY(-1px);
   }
 
   #cad-al {
-    left: calc(50% - 52px);
+    left: calc(50% - 58px);
   }
 
   #cad-ar {
