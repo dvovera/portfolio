@@ -136,7 +136,7 @@ p {
   height: 100%;
   background: white;
   border: 1px solid var(--blue-light);
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
   position: relative;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -218,11 +218,11 @@ p {
 }
 
 #cad-al {
-  left: 16px;
+  left: 160px;
 }
 
 #cad-ar {
-  right: 396px;
+  right: 540px;
 }
 
 .cad-dots {
@@ -266,7 +266,7 @@ p {
   }
 
   #cad-ar {
-    right: 16px;
+    right: 120px;
   }
 }
 

@@ -104,19 +104,6 @@ function onWheel(e) {
   }
 
   const activeSection = document.querySelector(".section.active");
-  const cadShell = activeSection?.querySelector(".cad-shell");
-  if (cadShell) {
-    const { top, bottom, left, right } = cadShell.getBoundingClientRect();
-    const overCadShell =
-      e.clientY >= top &&
-      e.clientY <= bottom &&
-      e.clientX >= left &&
-      e.clientX <= right;
-
-    if (overCadShell) {
-      return;
-    }
-  }
 
   // If you're over a scrollable inner container, let it scroll normally
   const scrollable = activeSection?.querySelector(

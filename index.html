@@ -723,8 +723,9 @@
       const prevBtn = document.getElementById("cad-al");
       const nextBtn = document.getElementById("cad-ar");
       const carousel = document.getElementById("cad-carousel");
+      const cadStage = cadSection.querySelector(".cad-stage");
       const shell = cadSection.querySelector(".cad-shell");
-      if (!track || !dotsEl || !prevBtn || !nextBtn || !carousel || !shell) return;
+      if (!track || !dotsEl || !prevBtn || !nextBtn || !carousel || !cadStage || !shell) return;
 
       function makeLabel(name) {
         return name.replace(/\.glb$/i, "").replace(/[_\-]/g, " ");
@@ -827,7 +828,8 @@
             model.position.sub(center.multiplyScalar(scale));
             const box2 = new THREE.Box3().setFromObject(model);
             model.position.y -= box2.min.y;
-            model.position.y -= (box2.max.y - box2.min.y) * 0.35;
+            const verticalOffset = (box2.max.y - box2.min.y) * 0.12;
+            model.position.y += verticalOffset;
 
             if (material || color) {
               const col = new THREE.Color(color || 0xcccccc);
@@ -967,10 +969,21 @@
       window.addEventListener("touchmove", (event) => dragMove(event.touches[0].clientX), { passive: true });
       window.addEventListener("touchend", dragEnd);
 
-      shell.addEventListener(
+      cadStage.addEventListener(
         "wheel",
         (event) => {
+          const leftArrowRect = prevBtn.getBoundingClientRect();
+          const rightArrowRect = nextBtn.getBoundingClientRect();
+          const isOutsideCarouselRange =
+            event.clientX < leftArrowRect.left ||
+            event.clientX > rightArrowRect.right;
+
+          if (isOutsideCarouselRange) {
+            return;
+          }
+
           event.preventDefault();
+          event.stopPropagation();
           targetAngle += event.deltaY * -0.003;
           const frac = (-targetAngle / (Math.PI * 2)) * total;
           const nearest = ((Math.round(frac) % total) + total) % total;
