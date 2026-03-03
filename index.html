@@ -344,7 +344,7 @@
       /* Section Subtitle */
       .section-subtitle {
         font-size: 1.4rem;
-        margin: 1.8rem 0 1rem;
+        margin: 1.8rem 0 2rem;
         color: var(--black);
         position: relative;
         padding-bottom: 0.6rem;
@@ -510,7 +510,7 @@
         counter-reset: award-file;
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.2rem;
+        gap: 0.8rem;
         width: 100%;
         max-width: 800px;
         margin-bottom: 1.5rem;
@@ -523,7 +523,7 @@
         background-color: white;
         border: 3px solid var(--black);
         border-radius: 0 16px 16px 16px;
-        padding: 1.8rem 1rem 1rem;
+        padding: 0.8rem 1rem 1rem;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         transition: transform 0.25s ease, box-shadow 0.25s ease,
           background-color 0.25s ease;
@@ -532,12 +532,13 @@
       }
 
       .award-card::before {
-        content: "FILE " counter(award-file, decimal-leading-zero);
+        /* content: "FILE " counter(award-file, decimal-leading-zero); */
+        content: "";
         position: absolute;
-        top: -29px;
+        top: -25px;
         left: -3px;
-        height: 28px;
-        min-width: 126px;
+        height: 23px;
+        min-width: 100px;
         padding: 0 0.75rem;
         display: flex;
         align-items: center;
@@ -546,7 +547,7 @@
         letter-spacing: 0.12em;
         font-weight: 600;
         color: var(--light-black);
-        background: var(--blue-lightest);
+        background: white;
         border: 3px solid var(--black);
         border-bottom: none;
         border-radius: 12px 12px 0 0;
@@ -565,7 +566,6 @@
       .award-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
-        background-color: var(--blue-lightest);
       }
 
       .award-icon {
