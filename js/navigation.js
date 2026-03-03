@@ -24,6 +24,9 @@ function scrollToSection(index) {
   // Prevent scrolling beyond bounds
   if (index < 0 || index >= sections.length) return;
 
+  const previousSectionIndex = currentSection;
+  const previousSection = document.querySelector(".section.active");
+
   currentSection = index;
 
   // Update container position
@@ -31,12 +34,24 @@ function scrollToSection(index) {
 
   // Update active class on sections
   document.querySelectorAll(".section").forEach((section, i) => {
+    if (i !== previousSectionIndex) {
+      section.classList.remove("section-exiting");
+    }
+
+    if (i === previousSectionIndex && i !== currentSection) {
+      section.classList.add("section-exiting");
+    }
+
     if (i === currentSection) {
       section.classList.add("active");
     } else {
       section.classList.remove("active");
     }
   });
+
+  if (previousSection && previousSectionIndex !== currentSection) {
+    previousSection.classList.add("section-exiting");
+  }
 
   // Update active buttons
   document.querySelectorAll(".nav-btn").forEach((btn, i) => {
@@ -90,10 +105,41 @@ let accumulatedDelta = 0;
 let canScroll = true;
 const SCROLL_THRESHOLD = 100;
 const FALLBACK_MS = 1000;
+let fallbackUnlockTimer;
+
+function attemptQueuedSectionScroll() {
+  if (!canScroll) return;
+  if (Math.abs(accumulatedDelta) < SCROLL_THRESHOLD) return;
+
+  const direction = accumulatedDelta > 0 ? 1 : -1;
+  const targetIndex = currentSection + direction;
+
+  if (targetIndex < 0 || targetIndex >= sections.length) {
+    accumulatedDelta = 0;
+    return;
+  }
+
+  canScroll = false;
+  accumulatedDelta = 0;
+  scrollToSection(targetIndex);
+
+  clearTimeout(fallbackUnlockTimer);
+  fallbackUnlockTimer = setTimeout(() => {
+    canScroll = true;
+    attemptQueuedSectionScroll();
+  }, FALLBACK_MS);
+}
 
 container.addEventListener("transitionend", (e) => {
   if (e.propertyName === "transform") {
+    document.querySelectorAll(".section").forEach((section, i) => {
+      if (i !== currentSection) {
+        section.classList.remove("section-exiting");
+      }
+    });
+
     canScroll = true;
+    attemptQueuedSectionScroll();
   }
 });
 
@@ -132,21 +178,8 @@ function onWheel(e) {
   }
 
   e.preventDefault();
-  if (!canScroll) return;
-
   accumulatedDelta += e.deltaY;
-
-  if (Math.abs(accumulatedDelta) >= SCROLL_THRESHOLD) {
-    canScroll = false;
-    const direction = accumulatedDelta > 0 ? 1 : -1;
-    accumulatedDelta = 0;
-    scrollToSection(currentSection + direction);
-
-    // fallback unlock
-    setTimeout(() => {
-      canScroll = true;
-    }, FALLBACK_MS);
-  }
+  attemptQueuedSectionScroll();
 }
 
 // install as non‑passive so preventDefault() works

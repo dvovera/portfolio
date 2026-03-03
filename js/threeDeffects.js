@@ -12,7 +12,10 @@ function applyRendererSize(renderer, width, height) {
 function isSectionActive(sectionId) {
   if (document.hidden) return false;
   const section = document.getElementById(sectionId);
-  return section ? section.classList.contains("active") : true;
+  return section
+    ? section.classList.contains("active") ||
+        section.classList.contains("section-exiting")
+    : true;
 }
 
 // Update the welcome canvas function to be mouse interactive
