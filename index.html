@@ -611,6 +611,31 @@
       <h1>projects</h1>
       <div class="projects-container"></div>
     </section>
+
+    <section class="section cad-projects" id="cad-projects">
+      <div class="cad-shell">
+        <h1 class="cad-title">cad projects</h1>
+
+        <div class="cad-main">
+          <div class="cad-stage">
+            <div class="cad-carousel" id="cad-carousel">
+              <div class="cad-track" id="cad-track"></div>
+            </div>
+          </div>
+
+          <div class="cad-desc-panel" id="cad-desc-panel">
+            <img id="cad-desc-image" alt="Model description" />
+            <div id="cad-desc-text"></div>
+          </div>
+        </div>
+
+        <button class="cad-arr" id="cad-al" aria-label="Previous model">&#8592;</button>
+        <button class="cad-arr" id="cad-ar" aria-label="Next model">&#8594;</button>
+
+        <div class="cad-drag-hint">&#8592; drag or scroll to spin &#8594;</div>
+        <div class="cad-dots" id="cad-dots"></div>
+      </div>
+    </section>
   </div>
 
   <div class="nav">
@@ -622,6 +647,9 @@
     </button>
     <button class="nav-btn" data-section="projects" data-hover="true">
       Projects
+    </button>
+    <button class="nav-btn" data-section="cad-projects" data-hover="true">
+      CAD Projects
     </button>
   </div>
   <!-- 
@@ -645,6 +673,335 @@
   <script src="js/projects.js"></script>
   <script src="js/threeDeffects.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const cadSection = document.getElementById("cad-projects");
+      if (!cadSection || typeof THREE === "undefined") return;
+
+      const MODELS = [
+        {
+          file: "model1.glb",
+          color: "#ff4444",
+          material: null,
+          description: "A simple wheel model",
+          descriptionImage: "image.png",
+        },
+        {
+          file: "model2.glb",
+          color: "#adcdff",
+          material: null,
+          description: "Add your description here",
+          descriptionImage: null,
+        },
+        {
+          file: "model3.glb",
+          color: "#fcb103",
+          material: null,
+          description: "Add your description here",
+          descriptionImage: null,
+        },
+        {
+          file: "model4.glb",
+          color: "#314bf5",
+          material: null,
+          description: "Add your description here",
+          descriptionImage: null,
+        },
+        {
+          file: "model5.glb",
+          color: "#8cff85",
+          material: null,
+          description: "Add your description here",
+          descriptionImage: null,
+        },
+      ];
+
+      const track = document.getElementById("cad-track");
+      const dotsEl = document.getElementById("cad-dots");
+      const descImg = document.getElementById("cad-desc-image");
+      const descText = document.getElementById("cad-desc-text");
+      const prevBtn = document.getElementById("cad-al");
+      const nextBtn = document.getElementById("cad-ar");
+      const carousel = document.getElementById("cad-carousel");
+      const shell = cadSection.querySelector(".cad-shell");
+      if (!track || !dotsEl || !prevBtn || !nextBtn || !carousel || !shell) return;
+
+      function makeLabel(name) {
+        return name.replace(/\.glb$/i, "").replace(/[_\-]/g, " ");
+      }
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      const CARD_W = 280;
+      const CARD_H = 320;
+      const total = MODELS.length;
+      const RADIUS = Math.max(320, total * 62);
+
+      let activeIndex = 0;
+      let targetAngle = 0;
+      let currentAngle = 0;
+
+      const loader = new THREE.GLTFLoader();
+      const cardEls = [];
+      const cardModels = [];
+      const renderers = [];
+      const scenes = [];
+      const cameras = [];
+
+      MODELS.forEach((entry, i) => {
+        const { file, color, material } = entry;
+        const angle = (i / total) * Math.PI * 2;
+        const x = Math.sin(angle) * RADIUS;
+        const z = Math.cos(angle) * RADIUS;
+
+        const card = document.createElement("div");
+        card.className = "cad-card" + (i === 0 ? " active" : "");
+        card.dataset.index = i;
+        const deg = (angle * 180) / Math.PI;
+        card.style.transform = `translate3d(${x - CARD_W / 2}px, ${-CARD_H / 2}px, ${z}px) rotateY(${deg}deg)`;
+
+        const inner = document.createElement("div");
+        inner.className = "cad-card-inner";
+
+        const canvas = document.createElement("canvas");
+        canvas.width = CARD_W * 2;
+        canvas.height = CARD_H * 2;
+        canvas.style.width = `${CARD_W}px`;
+        canvas.style.height = `${CARD_H}px`;
+
+        const loadDiv = document.createElement("div");
+        loadDiv.className = "cad-card-loading";
+        loadDiv.textContent = "LOADING";
+
+        const label = document.createElement("div");
+        label.className = "cad-card-label";
+        label.textContent = makeLabel(file);
+
+        inner.appendChild(loadDiv);
+        inner.appendChild(canvas);
+        inner.appendChild(label);
+        card.appendChild(inner);
+        track.appendChild(card);
+        cardEls.push(card);
+
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "cad-dot" + (i === 0 ? " active" : "");
+        dot.setAttribute("aria-label", `Go to model ${i + 1}`);
+        dot.addEventListener("click", () => goTo(i));
+        dotsEl.appendChild(dot);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(1);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        renderer.setClearColor(0x000000, 0);
+        renderer.setSize(CARD_W * 2, CARD_H * 2, false);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, CARD_W / CARD_H, 0.01, 500);
+        camera.position.set(0, 1, 3.6);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+        const key = new THREE.DirectionalLight(0xffffff, 1.2);
+        key.position.set(3, 5, 4);
+        scene.add(key);
+        const fill = new THREE.DirectionalLight(0x99caff, 0.35);
+        fill.position.set(-3, 2, -3);
+        scene.add(fill);
+
+        loader.load(
+          file,
+          (gltf) => {
+            loadDiv.remove();
+            const model = gltf.scene;
+            const box = new THREE.Box3().setFromObject(model);
+            const size = box.getSize(new THREE.Vector3());
+            const center = box.getCenter(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 1.8 / maxDim;
+            model.scale.setScalar(scale);
+            model.position.sub(center.multiplyScalar(scale));
+            const box2 = new THREE.Box3().setFromObject(model);
+            model.position.y -= box2.min.y;
+            model.position.y -= (box2.max.y - box2.min.y) * 0.35;
+
+            if (material || color) {
+              const col = new THREE.Color(color || 0xcccccc);
+              model.traverse((child) => {
+                if (!child.isMesh) return;
+                if (material === "flat") {
+                  child.material = new THREE.MeshStandardMaterial({
+                    color: col,
+                    roughness: 0.85,
+                    metalness: 0,
+                  });
+                } else if (material === "phong") {
+                  child.material = new THREE.MeshPhongMaterial({
+                    color: col,
+                    shininess: 100,
+                    specular: new THREE.Color(0x888888),
+                  });
+                } else if (material === "toon") {
+                  child.material = new THREE.MeshToonMaterial({ color: col });
+                } else if (material === "wire") {
+                  child.material = new THREE.MeshBasicMaterial({
+                    color: col,
+                    wireframe: true,
+                  });
+                } else {
+                  const mats = Array.isArray(child.material)
+                    ? child.material
+                    : [child.material];
+                  child.material =
+                    mats.length === 1
+                      ? (() => {
+                        const cloned = mats[0].clone();
+                        cloned.color.set(col);
+                        cloned.map = null;
+                        return cloned;
+                      })()
+                      : mats.map((mat) => {
+                        const cloned = mat.clone();
+                        cloned.color.set(col);
+                        cloned.map = null;
+                        return cloned;
+                      });
+                }
+              });
+            }
+
+            scene.add(model);
+            cardModels[i] = model;
+          },
+          undefined,
+          () => {
+            loadDiv.textContent = "NOT FOUND";
+          },
+        );
+
+        renderers.push(renderer);
+        scenes.push(scene);
+        cameras.push(camera);
+      });
+
+      function updateActive() {
+        cardEls.forEach((card, i) => {
+          card.classList.toggle("active", i === activeIndex);
+        });
+        dotsEl.querySelectorAll(".cad-dot").forEach((dot, i) => {
+          dot.classList.toggle("active", i === activeIndex);
+        });
+
+        const model = MODELS[activeIndex];
+        descText.textContent = model.description || "";
+        if (model.descriptionImage) {
+          descImg.src = model.descriptionImage;
+          descImg.style.display = "block";
+        } else {
+          descImg.style.display = "none";
+        }
+      }
+
+      function goTo(index) {
+        activeIndex = ((index % total) + total) % total;
+        const cardAngle = (activeIndex / total) * Math.PI * 2;
+        let diff = -cardAngle - targetAngle;
+        diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+        targetAngle += diff;
+        updateActive();
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        currentAngle = lerp(currentAngle, targetAngle, 0.1);
+        track.style.transform = `rotateY(${(currentAngle * 180) / Math.PI}deg)`;
+
+        cardModels.forEach((model, i) => {
+          if (!model) return;
+          if (i === activeIndex) {
+            model.rotation.y += 0.008;
+          }
+        });
+
+        renderers.forEach((renderer, i) => {
+          renderer.render(scenes[i], cameras[i]);
+        });
+      }
+
+      let dragging = false;
+      let dragLastX = 0;
+
+      function dragStart(x) {
+        dragging = true;
+        dragLastX = x;
+      }
+
+      function dragMove(x) {
+        if (!dragging) return;
+        const dx = x - dragLastX;
+        dragLastX = x;
+        targetAngle += dx * 0.007;
+
+        const frac = (-targetAngle / (Math.PI * 2)) * total;
+        const nearest = ((Math.round(frac) % total) + total) % total;
+        if (nearest !== activeIndex) {
+          activeIndex = nearest;
+          updateActive();
+        }
+      }
+
+      function dragEnd() {
+        if (!dragging) return;
+        dragging = false;
+        goTo(activeIndex);
+      }
+
+      carousel.addEventListener("mousedown", (event) => dragStart(event.clientX));
+      window.addEventListener("mousemove", (event) => dragMove(event.clientX));
+      window.addEventListener("mouseup", dragEnd);
+      carousel.addEventListener("touchstart", (event) => dragStart(event.touches[0].clientX), { passive: true });
+      window.addEventListener("touchmove", (event) => dragMove(event.touches[0].clientX), { passive: true });
+      window.addEventListener("touchend", dragEnd);
+
+      shell.addEventListener(
+        "wheel",
+        (event) => {
+          event.preventDefault();
+          targetAngle += event.deltaY * -0.003;
+          const frac = (-targetAngle / (Math.PI * 2)) * total;
+          const nearest = ((Math.round(frac) % total) + total) % total;
+          if (nearest !== activeIndex) {
+            activeIndex = nearest;
+            updateActive();
+          }
+        },
+        { passive: false },
+      );
+
+      prevBtn.addEventListener("click", () => goTo(activeIndex - 1));
+      nextBtn.addEventListener("click", () => goTo(activeIndex + 1));
+
+      document.addEventListener("keydown", (event) => {
+        const isCadActive = document.querySelector(".section.active")?.id === "cad-projects";
+        if (!isCadActive) return;
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          goTo(activeIndex - 1);
+        }
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          goTo(activeIndex + 1);
+        }
+      });
+
+      updateActive();
+      animate();
+    });
+  </script>
 </body>
 
 </html>

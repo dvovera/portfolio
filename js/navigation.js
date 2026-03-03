@@ -11,7 +11,7 @@ document.addEventListener("mousemove", (event) => {
 
 // Section navigation and animations
 let currentSection = 0;
-const sections = ["welcome", "about", "projects"];
+const sections = ["welcome", "about", "projects", "cad-projects"];
 const container = document.querySelector(".container");
 const progressBar = document.querySelector(".progress-bar");
 
@@ -74,6 +74,9 @@ document.querySelectorAll(".scroll-dot").forEach((dot, index) => {
 
 // Keyboard navigation
 document.addEventListener("keydown", (e) => {
+  const activeSectionId = document.querySelector(".section.active")?.id;
+  if (activeSectionId === "cad-projects") return;
+
   if (e.key === "ArrowRight" || e.key === "ArrowDown") {
     scrollToSection(currentSection + 1);
   } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
@@ -100,10 +103,24 @@ function onWheel(e) {
     return; // ignore when sidebar is open
   }
 
-  // If you're over a scrollable inner container, let it scroll normally
   const activeSection = document.querySelector(".section.active");
+  const cadShell = activeSection?.querySelector(".cad-shell");
+  if (cadShell) {
+    const { top, bottom, left, right } = cadShell.getBoundingClientRect();
+    const overCadShell =
+      e.clientY >= top &&
+      e.clientY <= bottom &&
+      e.clientX >= left &&
+      e.clientX <= right;
+
+    if (overCadShell) {
+      return;
+    }
+  }
+
+  // If you're over a scrollable inner container, let it scroll normally
   const scrollable = activeSection?.querySelector(
-    ".scrolling-container, .projects-container"
+    ".scrolling-container, .projects-container",
   );
   if (scrollable) {
     const { top, bottom, right, left } = scrollable.getBoundingClientRect();
