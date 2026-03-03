@@ -61,7 +61,7 @@ p {
 }
 
 .about {
-  background-color: var(--blue-light);
+  background-color: var(--blue-lightest);
 }
 
 .projects {
@@ -135,7 +135,7 @@ p {
   width: 100%;
   height: 100%;
   background: white;
-  border: 1px solid var(--blue-light);
+  border: 1px solid var(--black);
   border-radius: 0;
   overflow: hidden;
   position: relative;
@@ -143,7 +143,8 @@ p {
 }
 
 .cad-card.active .cad-card-inner {
-  border-color: var(--blue-medium);
+  border-color: var(--black);
+  border-width: 3px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
@@ -180,15 +181,41 @@ p {
 .cad-desc-panel {
   width: 380px;
   background: rgba(255, 255, 255, 0.92);
-  border: 1px solid var(--blue-light);
-  border-radius: 0;
+  border: 3px solid var(--black);
+  border-radius: 0 22px 22px 22px;
   box-shadow: 0 16px 34px rgba(0, 0, 0, 0.08);
-  margin-right: 2.5rem;
-  height: 60vh;
+  margin-right: 4rem;
+  height: auto;
   align-self: center;
-  padding: 1rem;
-  overflow-y: auto;
+  padding: 2.2rem 1rem 1rem;
+  overflow: visible;
   backdrop-filter: blur(8px);
+  position: relative;
+}
+
+.cad-desc-panel::before {
+  content: "";
+  position: absolute;
+  top: -29px;
+  left: -2.8px;
+  width: 150px;
+  height: 26.5px;
+  background: white;
+  border: 3px solid var(--black);
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+  z-index: 2;
+}
+
+.cad-desc-panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 145px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.92);
+  z-index: 1;
 }
 
 #cad-desc-image {
@@ -233,7 +260,7 @@ p {
   transform: translateY(-50%);
   z-index: 11;
   background: white;
-  border: 1px solid var(--blue-light);
+  border: 1px solid var(--black);
   color: var(--text-dark);
   width: 40px;
   height: 40px;
@@ -395,7 +422,7 @@ p {
 .project-card {
   background-color: white;
   border-radius: 0 22px 22px 22px;
-  padding: 2.2rem 1.3rem 1.3rem;
+  padding: 1.1rem 1.3rem 1.3rem;
   /* margin-bottom: 1.5rem; */
   box-shadow: none;
   width: 100%;
@@ -415,6 +442,19 @@ p {
   justify-content: flex-start;
 }
 
+.project-card[data-project="music-portfolio"] {
+  background-color: #def4ff;
+}
+
+.project-card[data-project="music-portfolio"]::before {
+  background: #def4ff;
+  border-bottom: none;
+}
+
+.project-card[data-project="music-portfolio"]::after {
+  background: #def4ff;
+}
+
 .project-card::before {
   content: "";
   position: absolute;
@@ -424,6 +464,7 @@ p {
   height: 28px;
   background: white;
   border: 3px solid var(--black);
+  border-bottom: none;
   border-bottom: 0;
   border-radius: 16px 16px 0 0;
 }
