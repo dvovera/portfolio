@@ -172,7 +172,7 @@ function createAboutCanvas() {
 
   const torusGeometry = new THREE.TorusKnotGeometry(8, 2.7, 100, 16);
   const torusMaterial = new THREE.MeshBasicMaterial({
-    color: 0x99caff,
+    color: 0x85bfff,
     wireframe: true,
   });
   const torus = new THREE.Mesh(torusGeometry, torusMaterial);
