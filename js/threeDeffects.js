@@ -1,7 +1,7 @@
 // *** OPTIMIZED 3D BACKGROUND EFFECTS ***
 
 const MAX_RENDER_PIXEL_RATIO = 1.2;
-const BACKGROUND_TARGET_FPS = 60;
+const BACKGROUND_TARGET_FPS = 120;
 const BACKGROUND_FRAME_TIME = 1000 / BACKGROUND_TARGET_FPS;
 
 function applyRendererSize(renderer, width, height) {
