@@ -1,6 +1,8 @@
 // *** OPTIMIZED 3D BACKGROUND EFFECTS ***
 
-const MAX_RENDER_PIXEL_RATIO = 1.5;
+const MAX_RENDER_PIXEL_RATIO = 1.2;
+const BACKGROUND_TARGET_FPS = 60;
+const BACKGROUND_FRAME_TIME = 1000 / BACKGROUND_TARGET_FPS;
 
 function applyRendererSize(renderer, width, height) {
   renderer.setPixelRatio(
@@ -27,7 +29,11 @@ function createWelcomeCanvas() {
     0.1,
     1000,
   );
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  const renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: false,
+    powerPreference: "high-performance",
+  });
   applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   document.getElementById("welcome-canvas").appendChild(renderer.domElement);
 
@@ -68,7 +74,7 @@ function createWelcomeCanvas() {
   scene.add(directionalLight);
 
   // Create floating particles (same as before)
-  const particleCount = 300;
+  const particleCount = 220;
   const particleGeometry = new THREE.BufferGeometry();
   const particlePositions = new Float32Array(particleCount * 3);
   const particleSizes = new Float32Array(particleCount);
@@ -117,11 +123,17 @@ function createWelcomeCanvas() {
   const mouseInfluenceY = -0.02;
   const mouseInfluenceX = 0.02;
 
+  let lastFrameTime = 0;
+
   function animate() {
     requestAnimationFrame(animate);
     if (!isSectionActive("welcome")) return;
 
-    const time = Date.now() * 0.0005;
+    const now = performance.now();
+    if (now - lastFrameTime < BACKGROUND_FRAME_TIME) return;
+    lastFrameTime = now;
+
+    const time = now * 0.0005;
 
     // Rotate the particle system as before
     particleSystem.rotation.y = time * 0.2;
@@ -165,7 +177,11 @@ function createAboutCanvas() {
     0.1,
     1000,
   );
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  const renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: false,
+    powerPreference: "high-performance",
+  });
 
   applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   document.getElementById("about-canvas").appendChild(renderer.domElement);
@@ -180,9 +196,15 @@ function createAboutCanvas() {
 
   camera.position.z = 10;
 
+  let lastFrameTime = 0;
+
   function animate() {
     requestAnimationFrame(animate);
     if (!isSectionActive("about")) return;
+
+    const now = performance.now();
+    if (now - lastFrameTime < BACKGROUND_FRAME_TIME) return;
+    lastFrameTime = now;
 
     // Smooth mouse movement
     mouseX += (targetMouseX - mouseX) * 0.05;
@@ -225,13 +247,17 @@ function createProjectsCanvas() {
     0.1,
     1000,
   );
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  const renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: false,
+    powerPreference: "high-performance",
+  });
 
   applyRendererSize(renderer, window.innerWidth, window.innerHeight);
   document.getElementById("projects-canvas").appendChild(renderer.domElement);
 
   // Create wave mesh
-  const waveGeometry = new THREE.PlaneGeometry(20, 20, 50, 50);
+  const waveGeometry = new THREE.PlaneGeometry(20, 20, 36, 36);
   const waveMaterial = new THREE.MeshBasicMaterial({
     color: 0x66a3ff,
     wireframe: true,
@@ -254,9 +280,15 @@ function createProjectsCanvas() {
   let lastMouseX = 0;
   let lastMouseY = 0;
 
+  let lastFrameTime = 0;
+
   function animate() {
     requestAnimationFrame(animate);
     if (!isSectionActive("projects")) return;
+
+    const now = performance.now();
+    if (now - lastFrameTime < BACKGROUND_FRAME_TIME) return;
+    lastFrameTime = now;
 
     // Smooth mouse movement
     mouseX += (targetMouseX - mouseX) * 0.05;
@@ -277,7 +309,7 @@ function createProjectsCanvas() {
     lastMouseY = mouseY;
 
     // Animate wave
-    const time = Date.now() * 0.001;
+    const time = now * 0.001;
     for (let i = 0; i < positions.length; i += 3) {
       const x = originalPositions[i];
       const y = originalPositions[i + 1];
@@ -325,7 +357,7 @@ function createCadProjectsCanvas() {
   if (!container) return;
 
   const CAD_BACKGROUND_MAX_PIXEL_RATIO = 1;
-  const CAD_BACKGROUND_TARGET_FPS = 120;
+  const CAD_BACKGROUND_TARGET_FPS = 60;
   const CAD_BACKGROUND_FRAME_TIME = 1000 / CAD_BACKGROUND_TARGET_FPS;
 
   function applyCadRendererSize(renderer, width, height) {
