@@ -357,7 +357,7 @@ function createCadProjectsCanvas() {
   if (!container) return;
 
   const CAD_BACKGROUND_MAX_PIXEL_RATIO = 1;
-  const CAD_BACKGROUND_TARGET_FPS = 60;
+  const CAD_BACKGROUND_TARGET_FPS = 120;
   const CAD_BACKGROUND_FRAME_TIME = 1000 / CAD_BACKGROUND_TARGET_FPS;
 
   function applyCadRendererSize(renderer, width, height) {
