@@ -166,7 +166,7 @@ function onWheel(e) {
       e.clientX <= right;
     if (overScrollable) {
       const { scrollTop, scrollHeight, clientHeight } = scrollable;
-      const atBottom = scrollTop >= scrollHeight - clientHeight - 1;
+      const atBottom = scrollTop >= scrollHeight - clientHeight - 5;
       const atTop = scrollTop <= 0;
 
       // only hijack if at the boundary
