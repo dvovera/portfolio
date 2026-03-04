@@ -110,6 +110,13 @@
                     <p></p>
                   </div>
                   <div class="award-card">
+                    <h3>ULJUS 2nd Place</h3>
+                    <p>
+                      Issued by ULJUS International Piano Competition. Placed 2nd in the international music composition
+                      competition, electronic music category.
+                    </p>
+                  </div>
+                  <div class="award-card">
                     <!-- <div class="award-icon">🏆</div> -->
                     <h3>American Invitational Mathematics Examination</h3>
                     <p>
@@ -150,23 +157,35 @@
             <!-- Education & Experience Tab -->
             <div class="tab-pane active" id="education-experience-tab">
               <div class="scrollable-content">
-                <h2 class="section-subtitle">Experience &amp; Education</h2>
-                <div class="timeline">
-                  <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content education">
-                      <div class="timeline-badge">EDU</div>
-                      <h3>BSc Mechatronics and Robotics Engineering Co-op</h3>
-                      <div class="timeline-meta">
-                        <h4>University of Alberta | Edmonton, Alberta</h4>
-                        <p class="timeline-date">2024-2029 | GPA: 3.9</p>
-                      </div>
-                      <p>
-                        Vice President Internal of the Mechatronics Engineering
-                        Students' Association
-                      </p>
+                <h2 class="section-subtitle">Education &amp; Experience</h2>
+                <div class="education-row">
+                  <div class="education-card">
+                    <h3>BSc Mechatronics and Robotics Engineering Co-op</h3>
+                    <div class="education-meta">
+                      <h4>University of Alberta | Edmonton, Alberta</h4>
                     </div>
+                    <p class="education-date">2024-2029 | GPA: 3.9</p>
+                    <p>
+                      Vice President Internal of the Mechatronics Engineering
+                      Students' Association
+                    </p>
                   </div>
+                  <div class="education-card">
+                    <h3>International Baccalaureate Diploma</h3>
+                    <div class="education-meta">
+                      <h4>
+                        Pearson UWC International School | Victoria, British
+                        Columbia
+                      </h4>
+                    </div>
+                    <p class="education-date">2022-2024</p>
+                    <p>
+                      Received a full-ride merit scholarship valued at $130
+                      000 to attend
+                    </p>
+                  </div>
+                </div>
+                <div class="timeline">
                   <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
@@ -174,10 +193,10 @@
                       <h3>Undergraduate Researcher in Fluid Dynamics</h3>
                       <div class="timeline-meta">
                         <h4>
-                          National Research Council Canada (NRC) | Edmonton,
+                          National Research Council Canada | Edmonton,
                           Alberta
                         </h4>
-                        <p class="timeline-date">Sep 2025-present</p>
+                        <p class="timeline-date">2025-present</p>
                       </div>
                       <p>
                         Researching ionic liquid-water droplet impacts on
@@ -193,10 +212,28 @@
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                       <div class="timeline-badge">EXP</div>
+                      <h3>Vice President Internal</h3>
+                      <div class="timeline-meta">
+                        <h4>Alberta Bionix | Edmonton, Alberta</h4>
+                        <p class="timeline-date">2025-present</p>
+                      </div>
+                      <p>
+                        Leading development of an EMG-powered prosthetic leg,
+                        integrating gait-cycle-based EMG control with PID
+                        encoder feedback and motor control. Designed and
+                        validated custom encoder and motor mounts in
+                        SolidWorks for seamless transmission integration.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                      <div class="timeline-badge">EXP</div>
                       <h3>Programming Instructor</h3>
                       <div class="timeline-meta">
                         <h4>CodeNinjas Tamarack | Edmonton, Alberta</h4>
-                        <p class="timeline-date">2024-present</p>
+                        <p class="timeline-date">2024-2025</p>
                       </div>
                       <p>
                         Taught students aged 7–14 fundamental programming
@@ -224,19 +261,17 @@
                   </div>
                   <div class="timeline-item">
                     <div class="timeline-dot"></div>
-                    <div class="timeline-content education">
-                      <div class="timeline-badge">EDU</div>
-                      <h3>International Baccalaureate Diploma</h3>
+                    <div class="timeline-content">
+                      <div class="timeline-badge">EXP</div>
+                      <h3>Robotics Team Lead & Founder</h3>
                       <div class="timeline-meta">
-                        <h4>
-                          Pearson UWC International School | Victoia, British
-                          Columbia
-                        </h4>
-                        <p class="timeline-date">2022-2024</p>
+                        <h4>Pearson UWC International School | Victoria, British Columbia</h4>
+                        <p class="timeline-date">2023-2024</p>
                       </div>
                       <p>
-                        Received a full-ride merit scholarship valued at $130
-                        000 to attend
+                        Led and founded Pearson College UWC's inaugural robotics
+                        team, Pearsonites, which received the FTC Robotics BC
+                        Provincial Connect Award.
                       </p>
                     </div>
                   </div>
@@ -435,6 +470,55 @@
         background-color: var(--blue-light);
         transform: translateY(-3px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .education-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+        margin: 0 0 1.2rem;
+      }
+
+      .education-card {
+        background-color: white;
+        padding: 1.2rem;
+        border: 3px solid var(--black);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .education-card h3 {
+        font-size: 1.25rem;
+        margin: 0 0 0.2rem;
+        line-height: 1.2;
+        color: var(--black);
+      }
+
+      .education-meta {
+        margin: 0 0 0.1rem;
+      }
+
+      .education-meta h4 {
+        font-size: 1.05rem;
+        margin: 0;
+        line-height: 1.25;
+        color: var(--light-black);
+        font-weight: 400;
+        min-width: 0;
+      }
+
+      .education-date {
+        font-size: 0.9rem;
+        color: var(--lighter-black);
+        margin: 0 0 0.35rem;
+        line-height: 1.25;
+        font-weight: 500;
+      }
+
+      .education-card p {
+        margin: 0;
+        text-align: left;
+        font-size: 1rem;
+        line-height: 1.2;
       }
 
       /* Timeline Styling */
@@ -656,10 +740,9 @@
 
       .award-card p {
         margin: 0;
-        font-size: 0.92rem;
-        color: var(--text-light);
         text-align: left;
-        line-height: 1.4;
+        font-size: 1rem;
+        line-height: 1.2;
         transition: none;
         opacity: 1;
         transform: none;
@@ -701,6 +784,18 @@
 
         .timeline:before {
           left: 18px;
+        }
+
+        .education-row {
+          grid-template-columns: 1fr;
+        }
+
+        .education-meta {
+          margin-bottom: 0.1rem;
+        }
+
+        .education-date {
+          margin: 0 0 0.35rem;
         }
 
         .timeline-item {
