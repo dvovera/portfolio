@@ -153,59 +153,19 @@ function onWheel(e) {
   const activeSection = document.querySelector(".section.active");
 
   // If you're over a scrollable inner container, let it scroll normally
-  const targetElement = e.target instanceof Element ? e.target : null;
-  const elementUnderPointer = document.elementFromPoint(e.clientX, e.clientY);
-  const wheelSource = elementUnderPointer || targetElement;
-
-  const candidateSet = new Set();
-
-  const hoveredCandidate = wheelSource?.closest(
-    ".scrollable-content, .projects-container, .scrolling-container",
+  const scrollable = activeSection?.querySelector(
+    ".scrolling-container, .projects-container",
   );
-  if (hoveredCandidate) {
-    candidateSet.add(hoveredCandidate);
-  }
-
-  if (activeSection?.id === "about") {
-    const activeTabScrollable = activeSection.querySelector(
-      ".tab-pane.active .scrollable-content",
-    );
-    const aboutScrollable = activeSection.querySelector(".scrolling-container");
-
-    if (activeTabScrollable) {
-      candidateSet.add(activeTabScrollable);
-    }
-    if (aboutScrollable) {
-      candidateSet.add(aboutScrollable);
-    }
-  }
-
-  if (activeSection?.id === "projects") {
-    const projectsScrollable = activeSection.querySelector(
-      ".projects-container",
-    );
-    if (projectsScrollable) {
-      candidateSet.add(projectsScrollable);
-    }
-  }
-
-  const candidates = Array.from(candidateSet).filter(
-    (candidate) => activeSection && activeSection.contains(candidate),
-  );
-
-  let scrollable = candidates.find(
-    (candidate) => candidate.scrollHeight > candidate.clientHeight + 1,
-  );
-
-  if (!scrollable) {
-    scrollable = candidates[0] || null;
-  }
-
   if (scrollable) {
-    const { scrollTop, scrollHeight, clientHeight } = scrollable;
-    const canScrollInternally = scrollHeight > clientHeight + 1;
+    const { top, bottom, right, left } = scrollable.getBoundingClientRect();
 
-    if (canScrollInternally) {
+    const overScrollable =
+      e.clientY >= top &&
+      e.clientY <= bottom &&
+      e.clientX >= left &&
+      e.clientX <= right;
+    if (overScrollable) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollable;
       const atBottom = scrollTop >= scrollHeight - clientHeight - 1;
       const atTop = scrollTop <= 0;
 
