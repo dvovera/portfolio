@@ -785,10 +785,10 @@ body {
   display: block;
   filter: saturate(0.94) contrast(1.08) brightness(1.04) sepia(0.06)
     hue-rotate(-3deg)
-    drop-shadow(2px 1px 0 rgba(255, 0, 50, 0.15))
-    drop-shadow(-2px -1px 0 rgba(0, 210, 255, 0.15))
-    drop-shadow(1px 0 0 rgba(255, 0, 80, 0.08))
-    drop-shadow(-1px 0 0 rgba(0, 180, 255, 0.08));
+    drop-shadow(2px 3px 0 rgba(255, 0, 50, 0.15))
+    drop-shadow(-2px -3px 0 rgba(0, 210, 255, 0.15))
+    /* drop-shadow(1px 0 0 rgba(255, 0, 80, 0.08))
+    drop-shadow(-1px 0 0 rgba(0, 180, 255, 0.08)); */
   /* Removes inline element gaps */
 }
 
